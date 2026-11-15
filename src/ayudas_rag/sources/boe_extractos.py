@@ -17,7 +17,7 @@ from datetime import date, timedelta
 from html.parser import HTMLParser
 from typing import Iterator
 
-from ..http import CachedFetcher, NotFoundError
+from ..http import BlockedURLError, CachedFetcher, NotFoundError
 from ..models import Document
 
 SUMARIO = "https://www.boe.es/datosabiertos/api/boe/sumario/{d}"
@@ -26,12 +26,20 @@ TXT = "https://www.boe.es/diario_boe/txt.php?id={id}"
 # Señales de que los beneficiarios son personas físicas.
 _PF = re.compile(
     r"personas? f[ií]sicas?|estudiantes?|alumn[oa]s|j[oó]venes|deportistas|artistas|creador[ae]s|autor[ae]s|"
-    r"investigador[ae]s|personas investigadoras|titulad[oa]s|graduad[oa]s|licenciad[oa]s|doctor[ae]s|escolares|"
+    r"investigador[ae]s|personas investigadoras|titulad[oa]s?|graduad[oa]s?|licenciad[oa]s?|doctor[ae]s|escolares|"
     r"mujeres|desemplead[oa]s|aut[oó]nom[oa]s|particulares|propietari[oa]s|arrendatari[oa]s|inquilin[oa]s|"
     r"personas? con discapacidad|becari[oa]s|v[ií]ctimas|profesorado|docentes|funcionari[oa]s|periodistas|"
-    r"espa[ñn]oles|nacionalidad|expertos|profesionales|mayores de (edad|\d+)|menores de \d+",
+    r"espa[ñn]oles|nacionalidad|expertos|profesionales|mayores de (edad|\d+)|menores de \d+|"
+    # fase 2: «las personas que reúnan...», «ciudadanos/ciudadanía de...»
+    r"(las|aquellas) personas que|ciudadan[oa]s|ciudadan[ií]a de",
     re.I,
 )
+# «Comunidades Autónomas», «Ciudad Autónoma»... no son trabajadores autónomos (falso positivo hallado en la fase 2).
+_NO_PF = re.compile(r"\b(comunidad|ciudad|universidad|regi[oó]n)(es)?\s+aut[oó]nom[ao]s?", re.I)
+# Beneficiarios que empiezan nombrando a personas («Personas mayores, personas con discapacidad... y entidades»).
+_EMPIEZA_PERSONAS = re.compile(
+    r"^\W*(\d+\.|[a-z]\))?\s*(las |los )?(personas (?!jur[ií]dicas)|ciudadan|alumn|estudiantes|j[oó]venes|mujeres)",
+    re.I)
 # Si el texto de beneficiarios empieza hablando de entidades, se descarta salvo mención explícita a personas físicas.
 _ENTIDAD = re.compile(
     r"entidad|empresa|organizaci|universidad|administraci|asociaci|fundaci|federaci|liga |ayuntamiento|"
@@ -150,6 +158,9 @@ def es_para_personas_fisicas(paras: list[str]) -> bool:
         return False
     if re.search(r"personas? f[ií]sicas?", ben, re.I) and not re.search(r"no podr[aá]n .{0,40}personas? f[ií]sicas", ben, re.I):
         return True
+    ben = _NO_PF.sub(" ", ben)
+    if _EMPIEZA_PERSONAS.match(ben):
+        return True
     if _ENTIDAD.search(ben[:160]):
         return False
     return bool(_PF.search(ben))
@@ -179,7 +190,13 @@ def parse_extracto(html: str, item: dict, fecha: str) -> Document | None:
     )
 
 
-def fetch_extractos(fetcher: CachedFetcher, end: date, days: int, solo_pf: bool = True) -> list[Document]:
+def fetch_extractos(fetcher: CachedFetcher, end: date, days: int, solo_pf: bool = True,
+                    stats: dict | None = None) -> list[Document]:
+    """Extractos de los `days` días que acaban en `end`. `stats` (opcional) recibe recuentos: extractos vistos,
+    vetados por robots.txt, sin texto y descartados por el filtro de personas físicas."""
+    st = stats if stats is not None else {}
+    for k in ("vistos", "vetados_robots", "sin_texto", "descartados_filtro", "conservados"):
+        st.setdefault(k, 0)
     docs = []
     for i in range(days):
         d = end - timedelta(days=i)
@@ -193,12 +210,30 @@ def fetch_extractos(fetcher: CachedFetcher, end: date, days: int, solo_pf: bool 
         except (KeyError, json.JSONDecodeError):
             continue
         for it in items:
-            html = fetcher.get(TXT.format(id=it["identificador"]), accept="text/html").decode("utf-8", "replace")
+            st["vistos"] += 1
+            try:
+                html = fetcher.get(TXT.format(id=it["identificador"]), accept="text/html").decode("utf-8", "replace")
+            except BlockedURLError:
+                st["vetados_robots"] += 1  # el BOE veta anuncios concretos en su robots.txt: se respetan
+                continue
             doc = parse_extracto(html, it, ds)
             if doc is None:
+                st["sin_texto"] += 1
                 continue
             _, paras = parse_txt(html)
             if solo_pf and not es_para_personas_fisicas(paras):
+                st["descartados_filtro"] += 1
                 continue
+            st["conservados"] += 1
             docs.append(doc)
     return docs
+
+
+def evaluar_filtro(etiquetas: dict[str, bool], decision: dict[str, bool]) -> dict:
+    """Matriz de confusión del filtro frente a etiquetas manuales (id → incluye personas físicas)."""
+    tp = sum(etiquetas[i] and decision[i] for i in etiquetas)
+    fp = sum(not etiquetas[i] and decision[i] for i in etiquetas)
+    fn = sum(etiquetas[i] and not decision[i] for i in etiquetas)
+    tn = len(etiquetas) - tp - fp - fn
+    return {"n": len(etiquetas), "tp": tp, "fp": fp, "fn": fn, "tn": tn,
+            "precision": tp / (tp + fp) if tp + fp else 0.0, "exhaustividad": tp / (tp + fn) if tp + fn else 0.0}

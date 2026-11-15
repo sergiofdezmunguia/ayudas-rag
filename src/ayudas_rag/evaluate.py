@@ -59,6 +59,47 @@ def tune_hybrid_weight(searcher: Searcher, questions: list[dict], base: str = "h
             "test": rtest["modos"]}
 
 
+def subset_metrics(res: dict, ids: set[str]) -> dict:
+    """Media de cada métrica por modo restringida a las preguntas `ids`."""
+    out = {}
+    for mode, per in res["por_pregunta"].items():
+        rows = [r for r in per if r["id"] in ids]
+        if rows:
+            out[mode] = {m: mean(r[m] for r in rows) for m in rows[0] if m not in ("id", "top5")}
+    return out
+
+
+def territorio(doc) -> str:
+    """Comunidad autónoma de un documento autonómico ("" si es estatal o convocatoria)."""
+    if doc.source != "legislacion" or doc.ambito != "Autonómico":
+        return ""
+    return doc.meta.get("departamento", "") or "?"
+
+
+def confusion_territorial(searcher: Searcher, res: dict, questions: list[dict], k: int = 5) -> dict:
+    """Para las preguntas cuyos relevantes son todos de una misma CCAA, proporción de documentos del top-k que son
+    normas autonómicas de *otra* CCAA (p. ej. una pregunta de Canarias que devuelve deducciones de Madrid)."""
+    qterr = {}
+    for q in questions:
+        ts = {territorio(searcher.docs[r]) for r in q["relevantes"] if r in searcher.docs}
+        if len(ts) == 1 and "" not in ts:
+            qterr[q["id"]] = ts.pop()
+    out = {"n_preguntas": len(qterr), "por_ccaa": {}, "modos": {}}
+    for t in sorted(set(qterr.values())):
+        out["por_ccaa"][t] = sum(v == t for v in qterr.values())
+    for mode, per in res["por_pregunta"].items():
+        tot = wrong = 0
+        for r in per:
+            if r["id"] not in qterr:
+                continue
+            for d in r["top5"][:k]:
+                tot += 1
+                t = territorio(searcher.docs[d])
+                wrong += bool(t) and t != qterr[r["id"]]
+        out["modos"][mode] = wrong / tot if tot else 0.0
+    return out
+
+
 def bootstrap_diff(per_a: list[dict], per_b: list[dict], metric: str, n: int = 2000, seed: int = 0) -> tuple[float, float, float]:
     """Diferencia media (b - a) con IC 95 % por bootstrap pareado sobre preguntas."""
     import random
@@ -74,7 +115,8 @@ def bootstrap_diff(per_a: list[dict], per_b: list[dict], metric: str, n: int = 2
 
 
 def report_md(res: dict, questions: list[dict], corpus_stats: dict, tuning: dict | None = None,
-              extra: dict | None = None) -> str:
+              extra: dict | None = None, subsets: dict | None = None, confusion: dict | None = None,
+              groups: dict | None = None, antes: dict | None = None) -> str:
     modes = list(res["modos"])
     cols = ["recall@1", "recall@3", "recall@5", "recall@10", "hit@5", "mrr", "ndcg@10"]
     L = ["# Evaluación de recuperación", "",
@@ -87,6 +129,19 @@ def report_md(res: dict, questions: list[dict], corpus_stats: dict, tuning: dict
          "| modo | " + " | ".join(cols) + " |", "|---" * (len(cols) + 1) + "|"]
     for m in modes:
         L.append(f"| {m} | " + " | ".join(f"{res['modos'][m][c]:.3f}" for c in cols) + " |")
+    if antes and subsets:
+        base = next(iter(subsets.values()))[1]  # primer subconjunto = preguntas de v0.1
+        L += ["", "## Antes y después (v0.1 → fase 2)", "",
+              f"«v0.1» = corpus de v0.1 y sus {antes['n_preguntas']} preguntas (`results/metricas_v0.1.json`); "
+              "«mismas preguntas» = esas preguntas sobre el corpus ampliado; «todas» = las "
+              f"{res['n_preguntas']} preguntas sobre el corpus ampliado.", "",
+              "| modo | MRR v0.1 | MRR mismas preguntas | MRR todas | recall@5 v0.1 | recall@5 mismas | recall@5 todas |",
+              "|---|---|---|---|---|---|---|"]
+        for m in modes:
+            if m in antes["modos"] and m in base:
+                a, b, c = antes["modos"][m], base[m], res["modos"][m]
+                L.append(f"| {m} | {a['mrr']:.3f} | {b['mrr']:.3f} | {c['mrr']:.3f} | {a['recall@5']:.3f} | "
+                         f"{b['recall@5']:.3f} | {c['recall@5']:.3f} |")
     L += ["", "## Diferencias pareadas (bootstrap, IC 95 %)", ""]
     pairs = [("bm25", "hybrid"), ("dense", "hybrid"), ("bm25", "dense")]
     for a, b in pairs:
@@ -103,6 +158,20 @@ def report_md(res: dict, questions: list[dict], corpus_stats: dict, tuning: dict
               "| modo | " + " | ".join(cols) + " |", "|---" * (len(cols) + 1) + "|"]
         for m, agg in tuning["test"].items():
             L.append(f"| {m} | " + " | ".join(f"{agg[c]:.3f}" for c in cols) + " |")
+    if subsets:
+        L += ["", "## Por subconjunto de preguntas", ""]
+        for name, (n, agg) in subsets.items():
+            L += [f"**{name}** ({n} preguntas)", "", "| modo | " + " | ".join(cols) + " |",
+                  "|---" * (len(cols) + 1) + "|"]
+            for m, a in agg.items():
+                L.append(f"| {m} | " + " | ".join(f"{a[c]:.3f}" for c in cols) + " |")
+            L.append("")
+    if confusion:
+        L += ["", "## Confusión entre comunidades autónomas", "",
+              f"Preguntas cuyos relevantes son todos normas de una sola CCAA: {confusion['n_preguntas']} ("
+              + ", ".join(f"{t}: {n}" for t, n in confusion["por_ccaa"].items()) + "). Proporción de documentos "
+              "del top-5 que son normas autonómicas de *otra* comunidad:", ""]
+        L += [f"- {m}: {v:.3f}" for m, v in confusion["modos"].items()]
     if extra:
         L += ["", "## Variante con glosario coloquial → jurídico (post hoc, optimista)", "",
               "El glosario (`text.GLOSARIO`) se escribió *después* de ver los fallos de BM25 en estas mismas "
@@ -110,6 +179,23 @@ def report_md(res: dict, questions: list[dict], corpus_stats: dict, tuning: dict
               "| modo | " + " | ".join(cols) + " |", "|---" * (len(cols) + 1) + "|"]
         for m, agg in extra["modos"].items():
             L.append(f"| {m} | " + " | ".join(f"{agg[c]:.3f}" for c in cols) + " |")
+    if extra and groups:
+        both = {**res["por_pregunta"], **extra["por_pregunta"]}
+        L += ["", "### Glosario por subconjunto (MRR)", "",
+              "Las preguntas de la fase 2 se escribieron *después* del glosario y sin tocarlo, así que para ellas "
+              "el glosario sí es una variante fuera de muestra.", "",
+              "| subconjunto | n | " + " | ".join(both) + " | hybridx@1.0 − dense (IC 95 %) |",
+              "|---|---|" + "---|" * (len(both) + 1)]
+        for name, ids in groups.items():
+            rows = {m: [r for r in per if r["id"] in ids] for m, per in both.items()}
+            if not rows["dense"]:
+                continue
+            cells = " | ".join(f"{mean(r['mrr'] for r in rows[m]):.3f}" for m in both)
+            diff = ""
+            if "hybridx@1.0" in rows:
+                d, lo, hi = bootstrap_diff(rows["dense"], rows["hybridx@1.0"], "mrr")
+                diff = f"{d:+.3f} [{lo:+.3f}, {hi:+.3f}]"
+            L.append(f"| {name} | {len(rows['dense'])} | {cells} | {diff} |")
     L += ["", "## Por pregunta (MRR)", "", "| id | pregunta | " + " | ".join(modes) + " |",
           "|---|---|" + "---|" * len(modes)]
     byid = {m: {r["id"]: r for r in res["por_pregunta"][m]} for m in modes}
