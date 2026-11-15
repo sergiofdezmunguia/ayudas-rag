@@ -85,3 +85,24 @@ def test_subconjuntos_y_confusion_territorial():
     # top-5 de la pregunta de Canarias: C#a1, M#a1 (otra CCAA) y quizá E#a1 → al menos 1/3 de confusión
     top = res["por_pregunta"]["bm25"][0]["top5"]
     assert conf["modos"]["bm25"] == sum(d == "M#a1" for d in top) / len(top) > 0
+
+
+def test_tune_rerank_y_seccion_del_informe():
+    from ayudas_rag.evaluate import RERANK_GRID, split_dev_test, tune_rerank
+
+    chunks = build_chunks(DOCS)
+    emb, enc = _fake_encoder(chunks)
+    s = Searcher(DOCS, chunks, emb, enc, anio_corte=2026)
+    qs = [{"id": f"q{i}", "pregunta": p, "relevantes": [r]} for i, (p, r) in enumerate([
+        ("deducción por alquiler jóvenes", "N#a1"), ("donaciones a fundaciones", "N#a3"),
+        ("nacimiento de un hijo", "N#a2"), ("alquiler de vivienda", "N#a1")])]
+    dev, test = split_dev_test(qs)
+    assert [q["id"] for q in dev] == ["q0", "q2"] and [q["id"] for q in test] == ["q1", "q3"]
+    rr = tune_rerank(s, qs, test_bases=("bm25", "dense"))
+    assert set(rr["dev"]) == {"dense" + r for r in RERANK_GRID}
+    assert rr["best"] == ""  # todo empata (ningún vencido, documentos de 1 fragmento): gana no reordenar
+    assert set(rr["test"]) == {"bm25", "dense"}
+    res = evaluate(s, qs)
+    md = report_md(res, qs, {"docs": 3, "chunks": 3, "legislacion": 3, "convocatorias": 0, "normas": 1},
+                   rerank=rr, iman={"doc": "X", "n": 2, "modos": {"dense": 1}})
+    assert "decidido en dev, medido una vez en test" in md and "(sin reordenar)" in md and "- dense: 1 de 2" in md

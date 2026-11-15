@@ -1,5 +1,6 @@
-# Subconjunto acotado del corpus. Todas las fuentes son del BOE (datos abiertos).
+# Subconjunto acotado del corpus. Fuentes: BOE (datos abiertos) y, desde la fase 3, el BOC (HTML).
 # "Basado en datos de la Agencia Estatal Boletín Oficial del Estado" — https://www.boe.es
+# "Fuente: Boletín Oficial de Canarias (Gobierno de Canarias)" — https://www.gobiernodecanarias.org/boc/
 
 # Fecha de corte para elegir la versión vigente de cada artículo (AAAAMMDD).
 fecha_corte = "20261115"
@@ -65,5 +66,11 @@ nota = "Ley 16/2019 de Servicios Sociales de Canarias (consolidación «Desactua
 [extractos]
 # Extractos BDNS publicados en el BOE (sección V-B) en los últimos N días hasta fecha_corte.
 # v0.1: 90 días; fase 2: 180.
+dias = 180
+solo_personas_fisicas = true
+
+[extractos_boc]
+# Fase 3: extractos BDNS publicados en el Boletín Oficial de Canarias (convocatorias autonómicas canarias).
+# robots.txt permite el HTML (veta PDF y boletines concretos); el aviso legal autoriza reproducir citando la fuente.
 dias = 180
 solo_personas_fisicas = true

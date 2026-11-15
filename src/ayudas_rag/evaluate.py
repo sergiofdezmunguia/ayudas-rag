@@ -59,6 +59,39 @@ def tune_hybrid_weight(searcher: Searcher, questions: list[dict], base: str = "h
             "test": rtest["modos"]}
 
 
+# Fase 3: reordenación de documentos contra el «imán» (ver pipeline.parse_mode). Del más simple al más complejo:
+# a igualdad en dev gana el primero.
+RERANK_GRID = ("", "+v3", "+v5", "+v10", "+vinf", "+l0.25", "+l0.5", "+l0.75", "+l1", "+vinf+l0.25", "+vinf+l0.5")
+
+
+def split_dev_test(questions: list[dict]) -> tuple[list[dict], list[dict]]:
+    """Mismo protocolo que en fases anteriores: posiciones impares (1.ª, 3.ª...) = dev; pares = test."""
+    return ([q for i, q in enumerate(questions) if i % 2 == 0], [q for i, q in enumerate(questions) if i % 2 == 1])
+
+
+def con_vencido_top5(searcher: Searcher, res: dict) -> dict:
+    """Por modo, proporción de preguntas con algún precepto vencido (vigencia.vencido) en el top-5."""
+    return {m: mean(any(d in searcher.vencidos for d in r["top5"]) for r in per) if per else 0.0
+            for m, per in res["por_pregunta"].items()}
+
+
+def tune_rerank(searcher: Searcher, questions: list[dict], base: str = "dense", metric: str = "mrr",
+                test_bases=("bm25", "dense", "hybrid@0.3")) -> dict:
+    """Elige la reordenación con dev (métrica `metric` del modo `base`) y la mide UNA vez en test, junto a la
+    versión sin reordenar de cada modo de `test_bases`."""
+    dev, test = split_dev_test(questions)
+    modes = [base + r for r in RERANK_GRID]
+    rdev = evaluate(searcher, dev, modes)
+    best = max(RERANK_GRID, key=lambda r: rdev["modos"][base + r][metric])
+    tmodes = [m for b in test_bases for m in ((b, b + best) if best else (b,))]
+    rtest = evaluate(searcher, test, tmodes)
+    return {"dev_n": len(dev), "test_n": len(test), "metric": metric, "base": base, "best": best,
+            "dev": {base + r: rdev["modos"][base + r] for r in RERANK_GRID},
+            "dev_vencido_top5": con_vencido_top5(searcher, rdev),
+            "test": rtest["modos"], "test_vencido_top5": con_vencido_top5(searcher, rtest),
+            "test_por_pregunta": rtest["por_pregunta"]}
+
+
 def subset_metrics(res: dict, ids: set[str]) -> dict:
     """Media de cada métrica por modo restringida a las preguntas `ids`."""
     out = {}
@@ -116,7 +149,8 @@ def bootstrap_diff(per_a: list[dict], per_b: list[dict], metric: str, n: int = 2
 
 def report_md(res: dict, questions: list[dict], corpus_stats: dict, tuning: dict | None = None,
               extra: dict | None = None, subsets: dict | None = None, confusion: dict | None = None,
-              groups: dict | None = None, antes: dict | None = None) -> str:
+              groups: dict | None = None, antes: dict | None = None, rerank: dict | None = None,
+              iman: dict | None = None, fase: str = "fase 3", antes_f2: dict | None = None) -> str:
     modes = list(res["modos"])
     cols = ["recall@1", "recall@3", "recall@5", "recall@10", "hit@5", "mrr", "ndcg@10"]
     L = ["# Evaluación de recuperación", "",
@@ -131,7 +165,7 @@ def report_md(res: dict, questions: list[dict], corpus_stats: dict, tuning: dict
         L.append(f"| {m} | " + " | ".join(f"{res['modos'][m][c]:.3f}" for c in cols) + " |")
     if antes and subsets:
         base = next(iter(subsets.values()))[1]  # primer subconjunto = preguntas de v0.1
-        L += ["", "## Antes y después (v0.1 → fase 2)", "",
+        L += ["", f"## Antes y después (v0.1 → {fase})", "",
               f"«v0.1» = corpus de v0.1 y sus {antes['n_preguntas']} preguntas (`results/metricas_v0.1.json`); "
               "«mismas preguntas» = esas preguntas sobre el corpus ampliado; «todas» = las "
               f"{res['n_preguntas']} preguntas sobre el corpus ampliado.", "",
@@ -142,6 +176,20 @@ def report_md(res: dict, questions: list[dict], corpus_stats: dict, tuning: dict
                 a, b, c = antes["modos"][m], base[m], res["modos"][m]
                 L.append(f"| {m} | {a['mrr']:.3f} | {b['mrr']:.3f} | {c['mrr']:.3f} | {a['recall@5']:.3f} | "
                          f"{b['recall@5']:.3f} | {c['recall@5']:.3f} |")
+    if antes_f2:
+        ids = {r["id"] for r in next(iter(antes_f2["por_pregunta"].values()))}
+        same = subset_metrics(res, ids)
+        L += ["", "## Fase 2 → fase 3 (sin reordenar)", "",
+              f"«fase 2» = `results/metricas_fase2.json` ({antes_f2['n_preguntas']} preguntas, corpus de la fase 2); "
+              "«mismas preguntas» = esas preguntas sobre el corpus de la fase 3 (con el BOC); «todas» = las "
+              f"{res['n_preguntas']} preguntas.", "",
+              "| modo | MRR fase 2 | MRR mismas | MRR todas | recall@5 fase 2 | recall@5 mismas | recall@5 todas |",
+              "|---|---|---|---|---|---|---|"]
+        for m in modes:
+            if m in antes_f2["modos"] and m in same:
+                a, b, c = antes_f2["modos"][m], same[m], res["modos"][m]
+                L.append(f"| {m} | {a['mrr']:.3f} | {b['mrr']:.3f} | {c['mrr']:.3f} | {a['recall@5']:.3f} | "
+                         f"{b['recall@5']:.3f} | {c['recall@5']:.3f} |")
     L += ["", "## Diferencias pareadas (bootstrap, IC 95 %)", ""]
     pairs = [("bm25", "hybrid"), ("dense", "hybrid"), ("bm25", "dense")]
     for a, b in pairs:
@@ -149,6 +197,8 @@ def report_md(res: dict, questions: list[dict], corpus_stats: dict, tuning: dict
             for metric in ("mrr", "recall@5"):
                 d, lo, hi = bootstrap_diff(res["por_pregunta"][a], res["por_pregunta"][b], metric)
                 L.append(f"- {b} − {a}, {metric}: {d:+.3f} [{lo:+.3f}, {hi:+.3f}]")
+    if rerank:
+        L += _rerank_md(rerank, iman)
     if tuning:
         L += ["", "## Ajuste del peso de BM25 en el híbrido (dev/test)", "",
               f"Peso elegido con las {tuning['dev_n']} preguntas impares (dev, {tuning['metric']}): "
@@ -182,7 +232,7 @@ def report_md(res: dict, questions: list[dict], corpus_stats: dict, tuning: dict
     if extra and groups:
         both = {**res["por_pregunta"], **extra["por_pregunta"]}
         L += ["", "### Glosario por subconjunto (MRR)", "",
-              "Las preguntas de la fase 2 se escribieron *después* del glosario y sin tocarlo, así que para ellas "
+              "Las preguntas de las fases 2 y 3 se escribieron *después* del glosario y sin tocarlo, así que para ellas "
               "el glosario sí es una variante fuera de muestra.", "",
               "| subconjunto | n | " + " | ".join(both) + " | hybridx@1.0 − dense (IC 95 %) |",
               "|---|---|" + "---|" * (len(both) + 1)]
@@ -202,3 +252,36 @@ def report_md(res: dict, questions: list[dict], corpus_stats: dict, tuning: dict
     for q in questions:
         L.append(f"| {q['id']} | {q['pregunta']} | " + " | ".join(f"{byid[m][q['id']]['mrr']:.2f}" for m in modes) + " |")
     return "\n".join(L) + "\n"
+
+
+def _rerank_md(rr: dict, iman: dict | None) -> list[str]:
+    b, best = rr["base"], rr["best"]
+    L = ["", "## Fase 3: preceptos vencidos que hacen de «imán» (decidido en dev, medido una vez en test)", "",
+         "Candidatos (ver `pipeline.parse_mode`): «+v<n>» baja n puestos los preceptos cuya vigencia se limita a "
+         "ejercicios ya pasados (`vigencia.py`); «+l<b>» penaliza documentos con muchos fragmentos (rango efectivo "
+         "× n^b). Se elige con las preguntas dev y la métrica "
+         f"{rr['metric']} del modo {b}; en test solo se mide la opción elegida.", "",
+         f"**Dev** ({rr['dev_n']} preguntas):", "",
+         "| candidato | mrr | recall@5 | ndcg@10 | preguntas con vencido en top-5 |", "|---|---|---|---|---|"]
+    for m, a in rr["dev"].items():
+        L.append(f"| {m} | {a['mrr']:.3f} | {a['recall@5']:.3f} | {a['ndcg@10']:.3f} | "
+                 f"{rr['dev_vencido_top5'][m]:.3f} |")
+    L += ["", f"Elegido: **{b + best if best else b + ' (sin reordenar)'}**.", "",
+          f"**Test** ({rr['test_n']} preguntas, no vistas al elegir):", "",
+          "| modo | recall@1 | recall@5 | mrr | ndcg@10 | preguntas con vencido en top-5 |", "|---|---|---|---|---|---|"]
+    for m, a in rr["test"].items():
+        L.append(f"| {m} | {a['recall@1']:.3f} | {a['recall@5']:.3f} | {a['mrr']:.3f} | {a['ndcg@10']:.3f} | "
+                 f"{rr['test_vencido_top5'][m]:.3f} |")
+    if best:
+        L += ["", "Diferencia pareada en test (bootstrap, IC 95 %):", ""]
+        tp = rr["test_por_pregunta"]
+        for m in tp:
+            if not m.endswith(best) and m + best in tp:
+                for metric in ("mrr", "recall@5"):
+                    d, lo, hi = bootstrap_diff(tp[m], tp[m + best], metric)
+                    L.append(f"- {m + best} − {m}, {metric}: {d:+.3f} [{lo:+.3f}, {hi:+.3f}]")
+    if iman:
+        L += ["", f"El «imán» de la fase 2 ({iman['doc']}), en las {iman['n']} preguntas de Canarias de la fase 2 "
+              "(dev y test juntos): preguntas que lo tienen en el top-5", ""]
+        L += [f"- {m}: {v} de {iman['n']}" for m, v in iman["modos"].items()]
+    return L
