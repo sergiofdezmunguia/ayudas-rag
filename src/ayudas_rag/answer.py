@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from .pipeline import Hit, Searcher
-from .text import split_sentences, tokenize
+from .text import expand_query, split_sentences, tokenize
 
 AVISO = ("Aviso: esto no es asesoramiento fiscal ni jurídico. Son fragmentos literales de normas y "
          "anuncios oficiales que pueden no aplicarse a tu caso, haber cambiado o tener requisitos "
@@ -30,7 +30,7 @@ def best_sentences(query: str, text: str, idf: dict[str, float], n: int = 2) -> 
     sents = split_sentences(text)
     if not sents:
         return []
-    q = set(tokenize(query))
+    q = set(tokenize(expand_query(query)))  # el glosario ayuda a casar «alquiler» con «arrendamiento»
     scored = [(sum(idf.get(t, 0.0) for t in q & set(tokenize(s))), i) for i, s in enumerate(sents)]
     top = [i for sc, i in sorted(scored, key=lambda x: (-x[0], x[1]))[:n] if sc > 0]
     if not top:

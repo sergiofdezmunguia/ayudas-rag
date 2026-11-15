@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import functools
 import json
 import tomllib
 from dataclasses import dataclass
@@ -13,7 +14,7 @@ import numpy as np
 from .http import CachedFetcher
 from .metrics import dedupe_to_docs
 from .models import Chunk, Document, read_jsonl, write_jsonl
-from .retrieval import BM25, Dense, Hybrid
+from .retrieval import BM25, Dense, ExpandedQuery, Hybrid
 from .sources import boe_extractos, boe_legislacion
 from .text import chunk_document
 
@@ -65,14 +66,25 @@ class Searcher:
         self.chunks = chunks
         texts = [c.index_text() for c in chunks]
         self.bm25 = BM25(texts)
+        self.bm25x = ExpandedQuery(self.bm25)
         self.dense = Dense(embeddings, encode_query) if embeddings is not None else None
-        self.hybrid = Hybrid([self.bm25, self.dense]) if self.dense else None
 
     def retriever(self, mode: str):
-        r = {"bm25": self.bm25, "dense": self.dense, "hybrid": self.hybrid}[mode]
-        if r is None:
+        """Modos: bm25, bm25x (con glosario), dense, hybrid, hybridx. Sufijo «@w» = peso de BM25 en la fusión RRF
+        (el denso pesa 1), p. ej. «hybrid@0.5»."""
+        base, _, w = mode.partition("@")
+        if base == "bm25":
+            return self.bm25
+        if base == "bm25x":
+            return self.bm25x
+        if self.dense is None:
             raise ValueError(f"Modo '{mode}' no disponible (¿faltan embeddings?)")
-        return r
+        if base == "dense":
+            return self.dense
+        if base in ("hybrid", "hybridx"):
+            lex = self.bm25 if base == "hybrid" else self.bm25x
+            return Hybrid([lex, self.dense], weights=[float(w) if w else 1.0, 1.0])
+        raise ValueError(f"Modo desconocido: {mode}")
 
     def search_chunks(self, query: str, mode: str = "hybrid", k: int = 50) -> list[Hit]:
         out = []
@@ -104,7 +116,7 @@ def load_searcher(with_dense: bool = True, encoder=None) -> Searcher:
         if encoder is None:
             from .retrieval import E5Encoder
             encoder = E5Encoder(meta["model"])
-        enc = encoder.query
+        enc = functools.lru_cache(maxsize=4096)(encoder.query)  # misma pregunta en varios modos
     return Searcher(docs, chunks, emb, enc)
 
 

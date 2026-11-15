@@ -32,3 +32,11 @@
 {"id": "q32", "pregunta": "me van a desahuciar, ¿hay alguna ayuda para pagar un alquiler?", "relevantes": ["BOE-A-2026-8872#a1-37", "BOE-A-2026-8872#a1-36"], "nota": "PEV 2026-2030, cap. IV secc. 2.ª"}
 {"id": "q33", "pregunta": "¿las becas de estudio tributan en el IRPF?", "relevantes": ["BOE-A-2007-6820#a2", "BOE-A-2006-20764#a7"], "nota": "exención en art. 7 LIRPF y desarrollo en art. 2 RIRPF"}
 {"id": "q34", "pregunta": "¿cuánto reduce el IRPF el mínimo por cada hijo?", "relevantes": ["BOE-A-2006-20764#a58", "BOCM-m-2010-90068#a2-3"], "nota": "estatal + autonómico Madrid"}
+{"id": "q35", "pregunta": "ayudas públicas para rehabilitar mi piso y hacerlo más accesible", "relevantes": ["BOE-A-2026-8872#a1-16", "BOE-A-2026-8872#a1-17", "BOE-A-2026-8872#a1-20"], "nota": "PEV 2026-2030, cap. III secc. 3.ª: objeto, beneficiarias y cuantía"}
+{"id": "q36", "pregunta": "¿cuánto paga al mes la ayuda estatal al alquiler para jóvenes que se emancipan?", "relevantes": ["BOE-A-2026-8872#a1-49", "BOE-A-2026-8872#a1-45"], "nota": "PEV 2026-2030, cap. IV secc. 3.ª"}
+{"id": "q37", "pregunta": "ayudas para jóvenes dramaturgos o autores de teatro menores de 35 años", "relevantes": ["BOE-B-2026-28490"], "nota": "convocatoria (extracto BDNS)"}
+{"id": "q38", "pregunta": "beca para estudiar un máster en Estados Unidos", "relevantes": ["BOE-B-2026-32561"], "nota": "convocatoria (extracto BDNS): beca Fulbright"}
+{"id": "q39", "pregunta": "ayudas sociales para mujeres deportistas o entrenadoras", "relevantes": ["BOE-B-2026-29712"], "nota": "convocatoria (extracto BDNS)"}
+{"id": "q40", "pregunta": "premio para periodistas sobre comunicación feminista", "relevantes": ["BOE-B-2026-29445"], "nota": "convocatoria (extracto BDNS)"}
+{"id": "q41", "pregunta": "becas de formación para recién graduados en el Instituto Geográfico Nacional", "relevantes": ["BOE-B-2026-34368"], "nota": "convocatoria (extracto BDNS)"}
+{"id": "q42", "pregunta": "ayuda de viaje para doctorandos menores de 30 para un congreso de investigación cardiovascular", "relevantes": ["BOE-B-2026-29941"], "nota": "convocatoria (extracto BDNS)"}

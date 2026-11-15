@@ -22,7 +22,11 @@ def check_questions(questions: list[dict], doc_ids: set[str]) -> list[str]:
     return [f"{q['id']}: {r}" for q in questions for r in q["relevantes"] if r not in doc_ids]
 
 
-def evaluate(searcher: Searcher, questions: list[dict], modes=("bm25", "dense", "hybrid")) -> dict:
+MAIN_MODES = ("bm25", "dense", "hybrid")
+GRID = (0.1, 0.2, 0.3, 0.5, 0.7, 1.0)
+
+
+def evaluate(searcher: Searcher, questions: list[dict], modes=MAIN_MODES) -> dict:
     res = {"n_preguntas": len(questions), "modos": {}, "por_pregunta": {}}
     for mode in modes:
         per = []
@@ -41,6 +45,20 @@ def evaluate(searcher: Searcher, questions: list[dict], modes=("bm25", "dense", 
     return res
 
 
+def tune_hybrid_weight(searcher: Searcher, questions: list[dict], base: str = "hybrid",
+                       metric: str = "mrr") -> dict:
+    """Elige el peso de BM25 en la fusión con las preguntas impares (dev) y lo mide en las pares (test)."""
+    dev = [q for i, q in enumerate(questions) if i % 2 == 0]
+    test = [q for i, q in enumerate(questions) if i % 2 == 1]
+    modes = [f"{base}@{w}" for w in GRID]
+    rdev = evaluate(searcher, dev, modes)
+    best = max(modes, key=lambda m: rdev["modos"][m][metric])
+    rtest = evaluate(searcher, test, ("bm25", "dense", f"{base}@1.0", best))
+    return {"dev_n": len(dev), "test_n": len(test), "metric": metric,
+            "dev": {m: rdev["modos"][m][metric] for m in modes}, "best": best,
+            "test": rtest["modos"]}
+
+
 def bootstrap_diff(per_a: list[dict], per_b: list[dict], metric: str, n: int = 2000, seed: int = 0) -> tuple[float, float, float]:
     """Diferencia media (b - a) con IC 95 % por bootstrap pareado sobre preguntas."""
     import random
@@ -55,7 +73,8 @@ def bootstrap_diff(per_a: list[dict], per_b: list[dict], metric: str, n: int = 2
     return mean(diffs), boots[int(0.025 * n)], boots[int(0.975 * n)]
 
 
-def report_md(res: dict, questions: list[dict], corpus_stats: dict) -> str:
+def report_md(res: dict, questions: list[dict], corpus_stats: dict, tuning: dict | None = None,
+              extra: dict | None = None) -> str:
     modes = list(res["modos"])
     cols = ["recall@1", "recall@3", "recall@5", "recall@10", "hit@5", "mrr", "ndcg@10"]
     L = ["# Evaluación de recuperación", "",
@@ -75,6 +94,22 @@ def report_md(res: dict, questions: list[dict], corpus_stats: dict) -> str:
             for metric in ("mrr", "recall@5"):
                 d, lo, hi = bootstrap_diff(res["por_pregunta"][a], res["por_pregunta"][b], metric)
                 L.append(f"- {b} − {a}, {metric}: {d:+.3f} [{lo:+.3f}, {hi:+.3f}]")
+    if tuning:
+        L += ["", "## Ajuste del peso de BM25 en el híbrido (dev/test)", "",
+              f"Peso elegido con las {tuning['dev_n']} preguntas impares (dev, {tuning['metric']}): "
+              + ", ".join(f"{m.split('@')[1]}→{v:.3f}" for m, v in tuning["dev"].items())
+              + f". Mejor: **{tuning['best']}**.", "",
+              f"Resultados en las {tuning['test_n']} preguntas pares (test, no vistas al elegir el peso):", "",
+              "| modo | " + " | ".join(cols) + " |", "|---" * (len(cols) + 1) + "|"]
+        for m, agg in tuning["test"].items():
+            L.append(f"| {m} | " + " | ".join(f"{agg[c]:.3f}" for c in cols) + " |")
+    if extra:
+        L += ["", "## Variante con glosario coloquial → jurídico (post hoc, optimista)", "",
+              "El glosario (`text.GLOSARIO`) se escribió *después* de ver los fallos de BM25 en estas mismas "
+              "preguntas, así que estas cifras sobrestiman lo que daría con preguntas nuevas.", "",
+              "| modo | " + " | ".join(cols) + " |", "|---" * (len(cols) + 1) + "|"]
+        for m, agg in extra["modos"].items():
+            L.append(f"| {m} | " + " | ".join(f"{agg[c]:.3f}" for c in cols) + " |")
     L += ["", "## Por pregunta (MRR)", "", "| id | pregunta | " + " | ".join(modes) + " |",
           "|---|---|" + "---|" * len(modes)]
     byid = {m: {r["id"]: r for r in res["por_pregunta"][m]} for m in modes}

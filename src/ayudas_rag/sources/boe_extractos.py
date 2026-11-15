@@ -23,14 +23,22 @@ from ..models import Document
 SUMARIO = "https://www.boe.es/datosabiertos/api/boe/sumario/{d}"
 TXT = "https://www.boe.es/diario_boe/txt.php?id={id}"
 
-# Beneficiarios que son (o incluyen) personas físicas.
+# Señales de que los beneficiarios son personas físicas.
 _PF = re.compile(
-    r"personas? f[ií]sicas?|estudiantes?|alumn[oa]s|j[oó]venes|deportistas|artistas|creador[ae]s|"
-    r"investigador[ae]s|titulad[oa]s|doctor[ae]s|familias|mujeres|desemplead[oa]s|trabajador[ae]s|"
-    r"aut[oó]nom[oa]s|particulares|propietari[oa]s|arrendatari[oa]s|inquilin[oa]s|personas? con discapacidad|"
-    r"personas? (mayores|residentes|beneficiarias|solicitantes|interesadas)|becari[oa]s|víctimas|profesorado|docentes",
+    r"personas? f[ií]sicas?|estudiantes?|alumn[oa]s|j[oó]venes|deportistas|artistas|creador[ae]s|autor[ae]s|"
+    r"investigador[ae]s|personas investigadoras|titulad[oa]s|graduad[oa]s|licenciad[oa]s|doctor[ae]s|escolares|"
+    r"mujeres|desemplead[oa]s|aut[oó]nom[oa]s|particulares|propietari[oa]s|arrendatari[oa]s|inquilin[oa]s|"
+    r"personas? con discapacidad|becari[oa]s|v[ií]ctimas|profesorado|docentes|funcionari[oa]s|periodistas|"
+    r"espa[ñn]oles|nacionalidad|expertos|profesionales|mayores de (edad|\d+)|menores de \d+",
     re.I,
 )
+# Si el texto de beneficiarios empieza hablando de entidades, se descarta salvo mención explícita a personas físicas.
+_ENTIDAD = re.compile(
+    r"entidad|empresa|organizaci|universidad|administraci|asociaci|fundaci|federaci|liga |ayuntamiento|"
+    r"corporaci|centros|personas? jur[ií]dicas?|colegios profesionales|organismos|agrupaciones|cooperativas|consorcio",
+    re.I,
+)
+_BEN_TITLE = re.compile(r"beneficiari|destinatari|candidat|solicitantes|requisit|participantes", re.I)
 
 
 def iter_items(node) -> Iterator[dict]:
@@ -110,17 +118,27 @@ def parse_txt(html: str) -> tuple[str, list[str]]:
     return re.sub(r"\s+", " ", p.title).strip(), p.paras
 
 
-_SECTION = re.compile(r"^(Primer[oa]?|Segund[oa]|Tercer[oa]?|Cuart[oa]|Quint[oa]|Sext[oa]|S[eé]ptim[oa]|Octav[oa]|Noven[oa]|D[eé]cim[oa])\.?\s*(.*)$", re.I)
+_SECTION = re.compile(
+    r"^(Primer[oa]?|Segund[oa]|Tercer[oa]?|Cuart[oa]|Quint[oa]|Sext[oa]|S[eé]ptim[oa]|Octav[oa]|Noven[oa]|D[eé]cim[oa]|\d{1,2})"
+    r"\s*[.)-]+\s*(.*)$", re.I)
 
 
 def beneficiarios(paras: list[str]) -> str:
-    """Texto de la sección «Beneficiarios» (hasta la siguiente sección numerada)."""
+    """Texto de la sección «Beneficiarios» (o destinatarios/candidatos/requisitos), hasta la siguiente sección.
+
+    Admite el título en su propio párrafo («Segundo. Beneficiarios») o en línea («Primero. Beneficiarios: ...»).
+    """
     out, inside = [], False
     for p in paras:
         m = _SECTION.match(p)
-        if m and len(p) < 120:
-            inside = "beneficiari" in m.group(2).lower()
-            continue
+        if m:
+            rest = m.group(2)
+            title, _, inline = rest.partition(":") if ":" in rest[:60] else (rest, "", "")
+            if len(title) < 80:
+                inside = bool(_BEN_TITLE.search(title))
+                if inside and inline.strip():
+                    out.append(inline.strip())
+                continue
         if inside:
             out.append(p)
     return " ".join(out)
@@ -129,6 +147,10 @@ def beneficiarios(paras: list[str]) -> str:
 def es_para_personas_fisicas(paras: list[str]) -> bool:
     ben = beneficiarios(paras)
     if not ben:
+        return False
+    if re.search(r"personas? f[ií]sicas?", ben, re.I) and not re.search(r"no podr[aá]n .{0,40}personas? f[ií]sicas", ben, re.I):
+        return True
+    if _ENTIDAD.search(ben[:160]):
         return False
     return bool(_PF.search(ben))
 

@@ -58,7 +58,7 @@ def cmd_ask(args) -> None:
 def cmd_eval(args) -> None:
     from pathlib import Path
 
-    from .evaluate import check_questions, evaluate, load_questions, report_md
+    from .evaluate import check_questions, evaluate, load_questions, report_md, tune_hybrid_weight
     from .pipeline import ROOT, load_searcher
 
     qs = load_questions(Path(args.preguntas))
@@ -67,6 +67,8 @@ def cmd_eval(args) -> None:
     if missing:
         sys.exit("Ids relevantes inexistentes en el corpus:\n" + "\n".join(missing))
     res = evaluate(s, qs)
+    tuning = tune_hybrid_weight(s, qs)
+    extra = evaluate(s, qs, ("bm25x", "hybridx@1.0", tuning["best"].replace("hybrid", "hybridx")))
     docs = list(s.docs.values())
     stats = {"docs": len(docs), "chunks": len(s.chunks),
              "legislacion": sum(d.source == "legislacion" for d in docs),
@@ -74,9 +76,12 @@ def cmd_eval(args) -> None:
              "normas": len({d.norm_id for d in docs if d.source == "legislacion"})}
     out = ROOT / "results"
     out.mkdir(exist_ok=True)
+    res["ajuste"] = tuning
+    res["glosario"] = extra["modos"]
     (out / "metricas.json").write_text(json.dumps(res, ensure_ascii=False, indent=1))
-    (out / "informe.md").write_text(report_md(res, qs, stats))
-    for m, agg in res["modos"].items():
+    (out / "informe.md").write_text(report_md(res, qs, stats, tuning, extra))
+    print("ajuste:", tuning["best"], {m: round(v["mrr"], 3) for m, v in tuning["test"].items()})
+    for m, agg in {**res["modos"], **extra["modos"]}.items():
         print(m, " ".join(f"{k}={v:.3f}" for k, v in agg.items() if k in ("recall@5", "mrr", "ndcg@10")))
 
 
@@ -93,7 +98,7 @@ def main(argv=None) -> None:
     a.set_defaults(func=cmd_index)
     a = sp.add_parser("ask", help="pregunta y respuesta extractiva con citas")
     a.add_argument("pregunta")
-    a.add_argument("--mode", default="hybrid", choices=["bm25", "dense", "hybrid"])
+    a.add_argument("--mode", default="dense", help="bm25 | bm25x | dense | hybrid[@w] | hybridx[@w] (por defecto: dense, el mejor en la evaluación)")
     a.add_argument("-n", type=int, default=4)
     a.set_defaults(func=cmd_ask)
     a = sp.add_parser("eval", help="evaluación de recuperación")

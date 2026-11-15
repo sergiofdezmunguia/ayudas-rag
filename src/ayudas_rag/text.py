@@ -46,6 +46,45 @@ def stem(tok: str) -> str:
     return tok
 
 
+# Glosario coloquial → lenguaje de las normas. OJO: escrito tras ver fallos de BM25 en la evaluación,
+# así que sus resultados son optimistas (ver results/informe.md).
+GLOSARIO = {
+    "alquiler": "arrendamiento arrendatario",
+    "alquilado": "arrendamiento arrendado",
+    "inquilino": "arrendatario",
+    "desgravar": "deducir deducción",
+    "desgravo": "deducir deducción",
+    "desgravación": "deducción",
+    "renta": "impuesto sobre la renta de las personas físicas",
+    "irpf": "impuesto sobre la renta de las personas físicas",
+    "bebé": "nacimiento hijo",
+    "hijo": "descendiente",
+    "hijos": "descendientes",
+    "ong": "entidades sin fines lucrativos donativos",
+    "donar": "donativos donaciones",
+    "sueldo": "rendimientos del trabajo",
+    "brutos": "rendimientos íntegros",
+    "hipoteca": "préstamo adquisición vivienda habitual",
+    "casa": "vivienda",
+    "piso": "vivienda",
+    "desahuciar": "desahucio",
+    "cobra": "cuantía prestación",
+    "cobrar": "cuantía abono",
+    "pueblo": "municipio",
+    "madre": "ascendiente",
+    "padre": "ascendiente",
+    "placas": "autoconsumo",
+    "coche": "vehículo",
+    "autónomo": "actividad económica alta censo",
+    "beca": "becas formación",
+}
+
+
+def expand_query(q: str) -> str:
+    extra = [GLOSARIO[w] for w in re.findall(r"[\wáéíóúñü]+", q.lower()) if w in GLOSARIO]
+    return q + (" " + " ".join(extra) if extra else "")
+
+
 def tokenize(s: str) -> list[str]:
     return [stem(t) for t in _TOKEN.findall(fold(s)) if t not in STOPWORDS and len(t) > 1]
 

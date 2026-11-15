@@ -92,3 +92,15 @@ def test_fetch_extractos_offline(tmp_path, monkeypatch):
     miss.touch()
     docs = bx.fetch_extractos(f, date(2099, 12, 31), days=2)
     assert [d.doc_id for d in docs] == ["BOE-B-2099-10"]
+
+
+def test_beneficiarios_en_linea_y_titulos_alternativos():
+    paras = ["Primero. Beneficiarios: Españoles admitidos en el máster.", "Segundo. Objeto: becas."]
+    assert bx.beneficiarios(paras) == "Españoles admitidos en el máster."
+    assert bx.es_para_personas_fisicas(paras)
+    paras = ["Segundo. Candidatos y sus requisitos.", "Podrán ser candidatos los expertos de nacionalidad española.",
+             "Tercero. Dotación.", "10.000 euros."]
+    assert bx.beneficiarios(paras) == "Podrán ser candidatos los expertos de nacionalidad española."
+    assert bx.es_para_personas_fisicas(paras)
+    paras = ["Segundo. Beneficiarios", "Empresas que contraten a jóvenes desempleados."]
+    assert not bx.es_para_personas_fisicas(paras)  # habla de entidades al principio

@@ -8,7 +8,7 @@ from typing import Protocol, Sequence
 
 import numpy as np
 
-from .text import tokenize
+from .text import expand_query, tokenize
 
 
 class Retriever(Protocol):
@@ -47,6 +47,16 @@ class BM25:
         s = self.scores(query)
         idx = np.argsort(-s)[:k]
         return [(int(i), float(s[i])) for i in idx if s[i] > 0]
+
+
+class ExpandedQuery:
+    """Envuelve un recuperador léxico y amplía la consulta con el glosario coloquial → jurídico."""
+
+    def __init__(self, inner):
+        self.inner = inner
+
+    def search(self, query: str, k: int) -> list[tuple[int, float]]:
+        return self.inner.search(expand_query(query), k)
 
 
 class Dense:
