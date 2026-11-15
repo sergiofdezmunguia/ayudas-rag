@@ -55,3 +55,37 @@ descartarse. En la ventana de v0.1 (los primeros 90 días) solo cambian 2, y los
 aquella revisión (premios extraordinarios de FP y autónomos de Santiago). Con las etiquetas de v0.1, el filtro
 corregido daría P 20/21 ≈ 0,95 y exhaustividad 20/23 ≈ 0,87. Las dos muestras ya se han visto, así que para
 medirlo bien hace falta una tercera.
+
+## Fase 3: los 92 extractos del BOC (20-05-2026 a 13-11-2026), filtro sin tocar
+
+El filtro se aplica tal cual a los extractos BDNS del Boletín Oficial de Canarias (tienen la misma estructura
+«Primero.- Beneficiarios.»). Etiqueté a mano **todos** los 92 extractos de la ventana de 180 días (no es una
+muestra) antes de mirar qué decidía el filtro, con el mismo criterio que en la fase 2. Etiquetas y notas en
+[`eval/filtro_muestra_boc_fase3.tsv`](../eval/filtro_muestra_boc_fase3.tsv); para reproducir:
+`uv run ayudas filtro --etiquetas eval/filtro_muestra_boc_fase3.tsv`.
+
+**Cifra fuera de muestra (el filtro no se ha tocado después de verla):**
+
+| | etiquetado manual: sí | etiquetado manual: no |
+|---|---|---|
+| el filtro conserva | 31 | 0 |
+| el filtro descarta | 38 | 23 |
+
+- Precisión 31/31 = 1,00; exhaustividad 31/69 = 0,45. Lo que entra es correcto, pero se pierde más de la mitad.
+- Causas de los 38 falsos negativos, de más a menos frecuentes:
+  - Agricultura y ganadería (POSEI, PEPAC): «los ganaderos…», «los productores…», «industrias lácteas y
+    productores», sin ninguna señal de persona del filtro (11).
+  - Universidades: «**El** alumnado…», «el estudiantado», «Personal Docente e Investigador». La regla de la fase 2
+    que conserva las secciones que empiezan por «Alumnado…» no admite el artículo delante, y «Universidad de La
+    Laguna» activa la señal de entidad (13, más uno de «el alumnado de 0 a 3 años»).
+  - Extractos de ampliación de plazo, de crédito o de corrección de errores sin sección de beneficiarios (8).
+  - Listas mixtas que nombran primero a empresas («empresas, particulares y entidades del tercer sector»,
+    «personas jurídicas… b) empresarios individuales») (4).
+  - Un extracto que solo remite a las bases (parques nacionales).
+- 11 de las 92 etiquetas están marcadas como «dudoso» (sobre todo ayudas agrarias a empresas y extractos que
+  remiten a las bases).
+
+No corrijo el filtro en esta fase: cualquier cambio escrito viendo estos 92 casos daría otra cifra optimista y,
+además, cambiaría también los extractos del BOE de la fase 2. La corrección natural («el/la» antes de
+«alumnado», «estudiantado», «personal docente», y decidir si las ayudas agrarias a titulares de explotación son
+«para particulares») queda para una fase con una muestra nueva.

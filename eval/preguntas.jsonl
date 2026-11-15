@@ -68,3 +68,23 @@
 {"id": "q68", "pregunta": "soy profesor de instituto, ¿hay cursos online de formación del ministerio?", "relevantes": ["BOE-B-2026-17579"], "nota": "fase 2 (convocatoria 91-180 días)"}
 {"id": "q69", "pregunta": "ayudas para agricultores para conseguir un aval de SAECA", "relevantes": ["BOE-B-2026-22305", "BOE-B-2026-22029"], "nota": "fase 2 (convocatoria 91-180 días)"}
 {"id": "q70", "pregunta": "ayuda para el transporte escolar del colegio en Ceuta", "relevantes": ["BOE-B-2026-17382"], "nota": "fase 2 (convocatoria 91-180 días)"}
+{"id": "q71", "pregunta": "¿me puedo deducir en Canarias los libros de texto y el uniforme del colegio de mis hijos?", "relevantes": ["BOC-j-2009-90008#a7-2"], "nota": "fase 3 (Canarias)"}
+{"id": "q72", "pregunta": "tenemos un niño en acogida en Gran Canaria, ¿hay deducción en la renta?", "relevantes": ["BOC-j-2009-90008#a1-2"], "nota": "fase 3 (Canarias)"}
+{"id": "q73", "pregunta": "he cambiado las ventanas y puesto aislamiento en mi casa de Tenerife para ahorrar energía, ¿desgrava?", "relevantes": ["BOC-j-2009-90008#a14bis"], "nota": "fase 3 (Canarias)"}
+{"id": "q74", "pregunta": "pago la seguridad social de la persona que limpia y cuida en casa, vivo en Canarias, ¿me deduzco algo?", "relevantes": ["BOC-j-2009-90008#a1-10"], "nota": "fase 3 (Canarias)"}
+{"id": "q75", "pregunta": "mi padre vive conmigo y tiene una discapacidad del 70 %, ¿hay deducción autonómica canaria?", "relevantes": ["BOC-j-2009-90008#a1-6"], "nota": "fase 3 (Canarias)"}
+{"id": "q76", "pregunta": "dono dinero a un cabildo para un proyecto de medio ambiente, ¿me lo deduzco en Canarias?", "relevantes": ["BOC-j-2009-90008#a3"], "nota": "fase 3 (Canarias)"}
+{"id": "q77", "pregunta": "voy a arreglar un piso en Las Palmas para alquilarlo, ¿puedo deducir los gastos de reparación y de formalizar el contrato?", "relevantes": ["BOC-j-2009-90008#a1-8"], "nota": "fase 3 (Canarias)"}
+{"id": "q78", "pregunta": "tengo una discapacidad y me compro un piso en Canarias para vivir, ¿qué impuesto pago por la compra?", "relevantes": ["BOC-j-2009-90008#a33"], "nota": "fase 3 (Canarias)"}
+{"id": "q79", "pregunta": "estoy pagando la hipoteca de mi vivienda habitual en Canarias, ¿hay deducción autonómica?", "relevantes": ["BOC-j-2009-90008#a14"], "nota": "fase 3 (Canarias)"}
+{"id": "q80", "pregunta": "¿quién puede aplicarse las deducciones autonómicas de Canarias en el IRPF? ¿hay que vivir allí?", "relevantes": ["BOC-j-2009-90008#a2"], "nota": "fase 3 (Canarias)"}
+{"id": "q81", "pregunta": "vivo en La Gomera y mi hija se va a estudiar el grado a Tenerife, ¿hay alguna ayuda para el desplazamiento?", "relevantes": ["BOC-A-2026-129-2253"], "nota": "fase 3 (BOC)"}
+{"id": "q82", "pregunta": "estudio en la Universidad de La Laguna y no me llega para comer, ¿hay ayudas de comedor?", "relevantes": ["BOC-A-2026-132-2321"], "nota": "fase 3 (BOC)"}
+{"id": "q83", "pregunta": "mi hijo tiene TDAH y va a un instituto público en Canarias, ¿hay alguna ayuda?", "relevantes": ["BOC-A-2026-171-3074"], "nota": "fase 3 (BOC)"}
+{"id": "q84", "pregunta": "soy autónomo en Canarias y pedí un préstamo para invertir en el negocio, ¿me pueden ayudar a pagar los intereses?", "relevantes": ["BOC-A-2026-137-2424"], "nota": "fase 3 (BOC)"}
+{"id": "q85", "pregunta": "soy canario y quiero escribir el guion de una película, ¿hay alguna subvención?", "relevantes": ["BOC-A-2026-133-2342"], "nota": "fase 3 (BOC)"}
+{"id": "q86", "pregunta": "tengo unas viñas en Lanzarote para vino con denominación de origen, ¿qué ayuda hay por hectárea?", "relevantes": ["BOC-A-2026-109-1907"], "nota": "fase 3 (BOC)"}
+{"id": "q87", "pregunta": "cultivo tuneras para sacar cochinilla, ¿hay ayudas en Canarias?", "relevantes": ["BOC-A-2026-106-1862", "BOC-A-2026-227-3925"], "nota": "fase 3 (BOC)"}
+{"id": "q88", "pregunta": "soy universitario en Tenerife y me gustaría hacer prácticas en un pueblo, ¿hay becas?", "relevantes": ["BOC-A-2026-117-2040"], "nota": "fase 3 (BOC)"}
+{"id": "q89", "pregunta": "tengo 24 años y hago un curso de formación profesional adaptada en un centro público canario, ¿me dan beca?", "relevantes": ["BOC-A-2026-224-3882"], "nota": "fase 3 (BOC)"}
+{"id": "q90", "pregunta": "¿hay ayudas para pagar la matrícula del máster o del doctorado en la ULL?", "relevantes": ["BOC-A-2026-155-2791"], "nota": "fase 3 (BOC)"}

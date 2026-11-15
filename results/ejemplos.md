@@ -196,3 +196,46 @@ Pregunta: cumplo 18 años este año, ¿cómo pido el bono cultural joven?
 
 Aviso: esto no es asesoramiento fiscal ni jurídico. Son fragmentos literales de normas y anuncios oficiales que pueden no aplicarse a tu caso, haber cambiado o tener requisitos adicionales. Consulta la fuente oficial o a un profesional. Basado en datos de la Agencia Estatal Boletín Oficial del Estado (https://www.boe.es).
 ```
+
+## Fase 3
+
+### El «imán» de la DA 4.ª canaria, antes y después
+
+`ayudas ask "soy madre sola con dos hijos en Lanzarote, ¿qué me puedo deducir?" -n 3`, solo los títulos.
+
+Antes (`--mode dense`): la disposición de medidas por la inflación de 2022-2023 sale la primera, y la de la
+erupción de La Palma (2021-2022), la tercera; la respuesta ya avisa de que son medidas temporales.
+
+```
+[1] Disposición adicional cuarta. Medidas extraordinarias ... por la situación inflacionaria.
+    Ojo: ... Ojo: medida temporal para 2022-2023; ya no se aplica a la declaración ordinaria en curso (solo a declaraciones de esos ejercicios).
+[2] Artículo 7. Deducción por gastos de estudios de educación superior.
+[3] Disposición adicional primera. Medidas extraordinarias ... por la erupción volcánica de la isla de La Palma.
+```
+
+Después (modo por defecto, `dense+v5`): las dos bajan cinco puestos. El artículo relevante (11 ter, familias
+monoparentales) sigue sin estar en el top 3: es un fallo de recuperación que la reordenación no arregla.
+
+```
+[1] Artículo 7. Deducción por gastos de estudios de educación superior.
+[2] Disposición adicional decimoquinta.
+[3] Artículo 10. Deducciones por nacimiento o adopción de hijos.
+```
+
+### Convocatoria canaria del BOC
+
+```
+Pregunta: vivo en La Gomera y mi hija se va a estudiar el grado a Tenerife, ¿hay alguna ayuda para el desplazamiento?
+
+[1] EXTRACTO de la Orden de 16 de junio de 2026, por la que se aprueban las bases y la convocatoria, en concurrencia no competitiva, de las ayudas al desplazamiento para realizar estudios superiores universitarios de Grado y Máster en centros públicos en Canarias o en el resto del territorio español, así como para el caso de intercambio SICUE y ERASMUS+ para el curso académico 2025/2026.
+    Convocatoria (extracto BDNS en BOC) · publicado 20260629
+    Versión HTML no oficial del BOC; la oficial es el PDF: https://sede.gobiernodecanarias.org/boc/boc-a-2026-129-2253.pdf
+    «Solo se sufragarán los desplazamientos efectuados con tal fin realizados en el periodo comprendido entre el 1 de julio de 2025 y el 30 de junio de 2026.»
+    «Santa Cruz de Tenerife, a 16 de junio de 2026.»
+    Fuente: https://www.gobiernodecanarias.org/boc/2026/129/2253.html
+...
+Fuente de las convocatorias canarias: Boletín Oficial de Canarias (https://www.gobiernodecanarias.org/boc/).
+```
+
+La segunda frase citada es la línea de firma del extracto: la selección de frases no distingue la firma del
+cuerpo (pendiente).
