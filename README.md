@@ -1,5 +1,34 @@
 # ayudas-rag
 
+> **In English.** Retrieval over official Spanish legal texts (BOE open data) to find grants, benefits
+> and tax deductions for individuals, answering with literal quotes and a link to the official
+> source. No LLM generation on purpose: the answer is extractive, so it cannot invent amounts. Corpus:
+> 14 laws (state, Madrid, Canary Islands) plus 64 grant notices, 3,357 chunks. On 70 hand-labelled
+> colloquial questions, multilingual-e5-small reaches MRR 0.69 and recall@5 0.83, beating a
+> hand-written BM25 by +0.18 MRR [95 % CI +0.08, +0.27]; a tuned hybrid (RRF) does not beat dense
+> retrieval on held-out questions. The crawler honours each host's full robots.txt, which ruled out
+> the national grants database API.
+
+## En 30 segundos
+
+- **Problema.** Saber a qué ayudas o deducciones tienes derecho exige leer normas largas escritas en
+  lenguaje jurídico. La pregunta llega en lenguaje coloquial («tengo un bebé», «vivo de alquiler»).
+- **Qué hice.** Ingesta educada de datos abiertos del BOE, troceado por artículo con su ruta de
+  encabezados, BM25 propio, embeddings e5-small e híbrido RRF, y una respuesta extractiva con citas.
+  70 preguntas etiquetadas a mano antes de ejecutar ningún recuperador, con reparto dev/test para lo
+  que se ajusta.
+- **Resultado.** Denso: **MRR 0,69 y recall@5 0,83** en las 70 preguntas. Frente a BM25, +0,18 de
+  MRR (IC 95 % [+0,08, +0,27]). El híbrido ajustado en dev no gana al denso en test (0,65 frente a
+  0,69).
+- **Lo que no salió bien, medido.** Ampliar el corpus a Canarias bajó las preguntas antiguas
+  (0,71 → 0,68); en Canarias el denso se queda en 0,59, sobre todo por un artículo largo que hace
+  de «imán» en 11 de 20 preguntas. El filtro de convocatorias, que en v0.1 parecía dar P 0,95,
+  dio P 0,83 y exhaustividad 0,58 en una muestra nueva.
+- **Fase 3.** Bajar 5 puestos los preceptos ya vencidos (elegido en dev, medido una vez en test):
+  MRR del denso en test 0,689 → 0,719 (+0,030, IC 95 % [+0,004, +0,063]); Canarias 0,58 → 0,66 y
+  el «imán» pasa de 11 a 3 de 20 preguntas. Se añade el BOC (31 convocatorias); su filtro da
+  P 1,00 pero exhaustividad 0,45.
+
 Buscador de **ayudas, subvenciones y deducciones fiscales para particulares en España** construido sobre datos
 públicos oficiales del BOE y, para las convocatorias canarias, del Boletín Oficial de Canarias (BOC). Ante una pregunta del tipo *«soy asalariado de 30 años en Madrid, ¿qué ayudas o
 deducciones puedo pedir para alquiler?»* o *«vivo de alquiler en Tenerife, ¿cuánto me puedo desgravar?»* devuelve los artículos y convocatorias más relevantes, con fragmentos
@@ -56,7 +85,7 @@ BOC (HTML) ─────────┴► ingesta con caché ──► docume
 | Fuente | Decisión | Motivo |
 |---|---|---|
 | BOE, API de datos abiertos (legislación consolidada y sumarios) | **Sí** | Reutilización permitida citando la fuente ([aviso legal](https://www.boe.es/informacion/aviso_legal/index.php)). |
-| BOE, `diario_boe/txt.php` (texto HTML de anuncios) | **Sí** | Permitido en robots.txt (solo se vetan variantes de idioma, `xml.php` y PDF). |
+| BOE, `diario_boe/txt.php` (texto HTML de anuncios) | **Sí** | Permitido en robots.txt salvo variantes de idioma, `xml.php`, PDF y unos 1.700 anuncios concretos, que el cliente salta. |
 | BOC, páginas HTML (`/boc/AAAA/index.html`, sumario de cada boletín y `/boc/AAAA/NNN/XXXX.html`) | **Sí** | No tiene API ni datos abiertos (solo RSS por sección). Su `robots.txt` (compartido con gobiernodecanarias.org) veta todos los PDF (`/*.pdf$`) y ~700 rutas de boletines y anuncios concretos, no el HTML en general. El [aviso legal](https://www.gobiernodecanarias.org/principal/avisolegal/) autoriza la reproducción «siempre que se cite la fuente». Los PDF oficiales se enlazan, no se descargan. |
 | BDNS / infosubvenciones.es, API | **No** | Su `robots.txt` dice `Disallow: /api/  # API no permitida`. Se sustituye por los extractos BDNS que publica el BOE. |
 
@@ -66,7 +95,7 @@ cliente lee además el `robots.txt` completo de cada host (caché de 24 h; comod
 larga) y lo aplica también a lo que ya estaba en caché. El del BOE veta unos 1.700 anuncios `txt.php?id=…`
 concretos; en estos 180 días no ha caído ningún extracto de convocatoria, pero el cliente los saltaría.
 
-## Uso
+## Reproducir
 
 ```bash
 uv sync
@@ -76,7 +105,7 @@ uv run ayudas ask "soy asalariado de 30 años en Madrid, ¿qué ayudas o deducci
 uv run ayudas eval            # results/informe.md y results/metricas.json
 uv run ayudas filtro          # precisión del filtro de convocatorias frente a la muestra etiquetada
 uv run ayudas filtro --etiquetas eval/filtro_muestra_boc_fase3.tsv   # lo mismo con los 92 extractos del BOC
-uv run pytest                 # tests sin red con fixtures inventadas
+uv run pytest                 # 46 tests sin red con fixtures inventadas
 ```
 
 ## Evaluación
