@@ -42,8 +42,10 @@ def build_corpus(cfg: dict, fetcher: CachedFetcher) -> list[Document]:
     ex = cfg.get("extractos")
     if ex:
         end = datetime.strptime(cutoff, "%Y%m%d").date()
-        ed = boe_extractos.fetch_extractos(fetcher, end, ex["dias"], ex.get("solo_personas_fisicas", True))
-        print(f"  extractos BDNS en BOE: {len(ed)}")
+        st: dict = {}
+        ed = boe_extractos.fetch_extractos(fetcher, end, ex["dias"], ex.get("solo_personas_fisicas", True), st)
+        print(f"  extractos BDNS en BOE ({ex['dias']} días): {len(ed)} conservados de {st['vistos']} "
+              f"({st['vetados_robots']} vetados por robots.txt, {st['descartados_filtro']} descartados por el filtro)")
         docs.extend(ed)
     return docs
 

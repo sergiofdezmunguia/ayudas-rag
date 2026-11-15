@@ -23,6 +23,16 @@ class Citation:
     source: str
     sentences: list[str]
     score: float
+    aviso: str = ""  # p. ej. consolidación desactualizada en el BOE
+
+
+def aviso_documento(doc) -> str:
+    if doc.meta.get("estado_consolidacion") == "Desactualizado":
+        f = doc.meta.get("fecha_actualizacion", "")
+        return ("Ojo: el BOE marca la consolidación de esta norma como «desactualizada»"
+                + (f" (revisada el {f[6:8]}-{f[4:6]}-{f[:4]})" if len(f) == 8 else "")
+                + ": puede faltar alguna modificación reciente. Comprueba el boletín autonómico.")
+    return ""
 
 
 def best_sentences(query: str, text: str, idf: dict[str, float], n: int = 2) -> list[str]:
@@ -46,7 +56,7 @@ def answer(searcher: Searcher, query: str, mode: str = "hybrid", n_docs: int = 4
             heading=h.doc.heading, context=h.chunk.context, norm_title=h.doc.norm_title, url=h.doc.url,
             fecha=h.doc.fecha, source=h.doc.source,
             sentences=best_sentences(query, h.chunk.text, searcher.bm25.idf),
-            score=h.score,
+            score=h.score, aviso=aviso_documento(h.doc),
         ))
     return out
 
@@ -64,6 +74,8 @@ def format_answer(query: str, cites: list[Citation]) -> str:
         if c.context:
             lines.append(f"    {c.context[:200]}")
         lines.append(f"    {tipo} · {fecha}")
+        if c.aviso:
+            lines.append(f"    {c.aviso}")
         for s in c.sentences:
             lines.append(f"    «{s}»")
         lines.append(f"    Fuente: {c.url}")

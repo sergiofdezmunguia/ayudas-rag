@@ -50,7 +50,8 @@ def heading_level(titulo: str) -> int | None:
 
 
 def parse_texto(xml_bytes: bytes, norm_id: str, norm_title: str, ambito: str = "",
-                cutoff: str | None = None) -> list[Document]:
+                cutoff: str | None = None, norm_meta: dict | None = None) -> list[Document]:
+    """`norm_meta`: datos de la norma que se copian en cada documento (departamento, estado de consolidación...)."""
     cutoff = cutoff or date.today().strftime("%Y%m%d")
     root = ET.fromstring(xml_bytes)
     docs: list[Document] = []
@@ -93,7 +94,8 @@ def parse_texto(xml_bytes: bytes, norm_id: str, norm_title: str, ambito: str = "
             ambito=ambito,
             fecha=v.get("fecha_vigencia") or "",
             # las disposiciones adicionales/transitorias/finales no cuelgan del último capítulo
-            meta={"ruta": "" if heading.startswith("Disposici") else " > ".join(ruta[k] for k in sorted(ruta))},
+            meta={"ruta": "" if heading.startswith("Disposici") else " > ".join(ruta[k] for k in sorted(ruta)),
+                  **(norm_meta or {})},
         ))
     return docs
 
@@ -104,4 +106,8 @@ def fetch_norm(fetcher: CachedFetcher, norm_id: str, cutoff: str | None = None) 
     if meta.get("estatus_derogacion") == "S":
         return []
     xml = fetcher.get(API.format(id=norm_id) + "/texto", accept="application/xml")
-    return parse_texto(xml, norm_id, meta["titulo"], meta.get("ambito", {}).get("texto", ""), cutoff)
+    # «Desactualizado» = el BOE avisa de que la versión consolidada puede no incluir las últimas modificaciones.
+    nm = {"departamento": meta.get("departamento", {}).get("texto", ""),
+          "estado_consolidacion": meta.get("estado_consolidacion", {}).get("texto", ""),
+          "fecha_actualizacion": (meta.get("fecha_actualizacion") or "")[:8]}
+    return parse_texto(xml, norm_id, meta["titulo"], meta.get("ambito", {}).get("texto", ""), cutoff, nm)

@@ -20,6 +20,14 @@ def test_evaluate_y_informe():
         assert res["modos"][m]["recall@1"] == 1.0
     md = report_md(res, qs, {"docs": 3, "chunks": 3, "legislacion": 3, "convocatorias": 0, "normas": 1})
     assert "| hybrid |" in md and "q2" in md
+    from ayudas_rag.evaluate import subset_metrics
+
+    extra = evaluate(s, qs, ("bm25x", "hybridx@1.0"))
+    subsets = {"v0.1": (2, subset_metrics(res, {"q1", "q2"}))}
+    md = report_md(res, qs, {"docs": 3, "chunks": 3, "legislacion": 3, "convocatorias": 0, "normas": 1},
+                   extra=extra, subsets=subsets, groups={"v0.1": {"q1", "q2"}}, antes=res)
+    assert "## Antes y después" in md and "### Glosario por subconjunto" in md
+    assert "| v0.1 | 2 |" in md
 
 
 def test_bootstrap_diff_sin_diferencias():
@@ -51,3 +59,29 @@ def test_expand_query_y_modos_x():
     s = Searcher(DOCS, chunks, emb, enc)
     assert s.search_docs("me quiero desgravar por donar a una ONG", "bm25x")[0].doc.doc_id == "N#a3"
     assert s.search_docs("alquiler", "hybridx@0.5")
+
+
+def test_subconjuntos_y_confusion_territorial():
+    from ayudas_rag.evaluate import confusion_territorial, subset_metrics
+    from ayudas_rag.models import Document
+
+    docs = [Document("M#a1", "legislacion", "M", "Tributos Madrid", "Artículo 1. Deducción por alquiler.",
+                     "Deducción por alquiler de vivienda habitual en Madrid.", "u", "Autonómico",
+                     meta={"departamento": "Comunidad de Madrid"}),
+            Document("C#a1", "legislacion", "C", "Tributos Canarias", "Artículo 1. Deducción por alquiler.",
+                     "Deducción por alquiler de vivienda habitual en Canarias.", "u", "Autonómico",
+                     meta={"departamento": "Comunidad Autónoma de Canarias"}),
+            Document("E#a1", "legislacion", "E", "Ley estatal", "Artículo 1. Donativos.",
+                     "Donativos a fundaciones.", "u", "Estatal")]
+    chunks = build_chunks(docs)
+    s = Searcher(docs, chunks)
+    qs = [{"id": "c", "pregunta": "deducción alquiler vivienda Canarias", "relevantes": ["C#a1"]},
+          {"id": "e", "pregunta": "donativos fundaciones", "relevantes": ["E#a1"]}]
+    res = evaluate(s, qs, ("bm25",))
+    sub = subset_metrics(res, {"c"})
+    assert sub["bm25"]["mrr"] == 1.0
+    conf = confusion_territorial(s, res, qs)
+    assert conf["n_preguntas"] == 1 and conf["por_ccaa"] == {"Comunidad Autónoma de Canarias": 1}
+    # top-5 de la pregunta de Canarias: C#a1, M#a1 (otra CCAA) y quizá E#a1 → al menos 1/3 de confusión
+    top = res["por_pregunta"]["bm25"][0]["top5"]
+    assert conf["modos"]["bm25"] == sum(d == "M#a1" for d in top) / len(top) > 0

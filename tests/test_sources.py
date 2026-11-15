@@ -104,3 +104,84 @@ def test_beneficiarios_en_linea_y_titulos_alternativos():
     assert bx.es_para_personas_fisicas(paras)
     paras = ["Segundo. Beneficiarios", "Empresas que contraten a jóvenes desempleados."]
     assert not bx.es_para_personas_fisicas(paras)  # habla de entidades al principio
+
+
+def test_robots_comodines_regla_mas_larga_y_grupo_propio():
+    from ayudas_rag.http import Robots
+
+    r = Robots("User-agent: *\nDisallow: /diario_boe/xml.php?\nDisallow: /diario_boe/txt.php?id=BOE-B-2099-5\n"
+               "Disallow: /buscar/*lang=en\nDisallow: /privado/\nAllow: /privado/publico\nDisallow: /fin$\n"
+               "Disallow:\n")
+    assert not r.allowed("/diario_boe/txt.php?id=BOE-B-2099-5")
+    assert r.allowed("/diario_boe/txt.php?id=BOE-B-2099-6")
+    assert not r.allowed("/diario_boe/xml.php?id=BOE-A-1")
+    assert not r.allowed("/buscar/act.php?id=X&lang=en")
+    assert r.allowed("/buscar/act.php?id=X")
+    assert not r.allowed("/privado/x") and r.allowed("/privado/publico/x")
+    assert not r.allowed("/fin") and r.allowed("/final")
+    # un grupo propio para nuestro agente sustituye al de «*»
+    r2 = Robots("User-agent: *\nDisallow: /\n\nUser-agent: script-personal-ayudas-rag\nDisallow: /api/\n")
+    assert r2.allowed("/datos") and not r2.allowed("/api/x")
+    assert Robots("").allowed("/lo-que-sea")
+
+
+def test_fetcher_respeta_robots_en_cache_y_extractos(tmp_path):
+    from datetime import date
+
+    f = CachedFetcher(tmp_path, offline=True)
+    robots = "User-agent: *\nDisallow: /diario_boe/txt.php?id=BOE-B-2099-10\n"
+    p = f._path("https://www.boe.es/robots.txt", "text/plain")
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(robots)
+
+    def put(url, accept, data):
+        q = f._path(url, accept)
+        q.parent.mkdir(parents=True, exist_ok=True)
+        q.write_bytes(data)
+
+    put(bx.SUMARIO.format(d="20991231"), "application/json", (FX / "sumario.json").read_bytes())
+    put(bx.TXT.format(id="BOE-B-2099-10"), "text/html", (FX / "extracto_pf.html").read_bytes())
+    put(bx.TXT.format(id="BOE-B-2099-12"), "text/html", (FX / "extracto_entidades.html").read_bytes())
+    # aunque la página esté en caché, si robots.txt la veta no se sirve
+    with pytest.raises(BlockedURLError):
+        f.get(bx.TXT.format(id="BOE-B-2099-10"), accept="text/html")
+    st: dict = {}
+    docs = bx.fetch_extractos(f, date(2099, 12, 31), days=1, stats=st)
+    assert docs == []
+    assert st == {"vistos": 2, "vetados_robots": 1, "sin_texto": 0, "descartados_filtro": 1, "conservados": 0}
+    assert f.n_requests == 0
+
+
+def test_metadatos_de_norma_y_aviso_de_consolidacion():
+    from ayudas_rag.answer import aviso_documento
+
+    docs = bl.parse_texto((FX / "texto_norma.xml").read_bytes(), "N", "T", "Autonómico", cutoff="20261115",
+                          norm_meta={"departamento": "Comunidad Autónoma de Canarias",
+                                     "estado_consolidacion": "Desactualizado", "fecha_actualizacion": "20260814"})
+    assert docs[0].meta["ruta"] == "TÍTULO I"
+    assert docs[0].meta["departamento"] == "Comunidad Autónoma de Canarias"
+    av = aviso_documento(docs[0])
+    assert "desactualizada" in av and "14-08-2026" in av
+    docs[0].meta["estado_consolidacion"] = "Finalizado"
+    assert aviso_documento(docs[0]) == ""
+
+
+def test_filtro_fase2_comunidades_autonomas_y_personas_al_principio():
+    # «Comunidades Autónomas» no son trabajadores autónomos
+    paras = ["Segundo. Beneficiarios", "Diputaciones provinciales de las Comunidades Autónomas afectadas por la borrasca."]
+    assert not bx.es_para_personas_fisicas(paras)
+    paras = ["Segundo. Beneficiarios", "Trabajadores autónomos dados de alta en el RETA."]
+    assert bx.es_para_personas_fisicas(paras)
+    # empieza nombrando a personas aunque luego cite entidades
+    paras = ["Primero. Beneficiarios", "Personas mayores y personas en situación de dependencia, y entidades sin ánimo de lucro."]
+    assert bx.es_para_personas_fisicas(paras)
+    paras = ["Primero. Beneficiarios", "Personas jurídicas que ostenten la condición de operador."]
+    assert not bx.es_para_personas_fisicas(paras)
+    paras = ["Primero. Beneficiarios", "Podrán ser beneficiarios las personas que reúnan los requisitos de la base 3."]
+    assert bx.es_para_personas_fisicas(paras)
+
+
+def test_evaluar_filtro():
+    r = bx.evaluar_filtro({"a": True, "b": True, "c": False, "d": False}, {"a": True, "b": False, "c": True, "d": False})
+    assert (r["tp"], r["fp"], r["fn"], r["tn"]) == (1, 1, 1, 1)
+    assert r["precision"] == 0.5 and r["exhaustividad"] == 0.5
