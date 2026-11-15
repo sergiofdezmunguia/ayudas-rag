@@ -44,7 +44,26 @@ nota = "Ley 40/2003 de protección a las familias numerosas"
 id = "BOE-A-2002-25039"
 nota = "Ley 49/2002 de mecenazgo (incentivos fiscales a donativos)"
 
+# --- Fase 2: Comunidad Autónoma de Canarias (consolidadas por el BOE; ojo a «estado_consolidacion») ---
+
+[[norma]]
+id = "BOC-j-2009-90008"
+nota = "DLeg 1/2009 Canarias, tributos cedidos: deducciones autonómicas del IRPF (consolidación «Desactualizado»)"
+
+[[norma]]
+id = "BOE-A-2023-2940"
+nota = "Ley 5/2022 de la Renta Canaria de Ciudadanía"
+
+[[norma]]
+id = "BOE-A-2003-4607"
+nota = "Ley 2/2003 de Vivienda de Canarias (consolidación «Desactualizado»)"
+
+[[norma]]
+id = "BOE-A-2019-8794"
+nota = "Ley 16/2019 de Servicios Sociales de Canarias (consolidación «Desactualizado»)"
+
 [extractos]
 # Extractos BDNS publicados en el BOE (sección V-B) en los últimos N días hasta fecha_corte.
-dias = 90
+# v0.1: 90 días; fase 2: 180.
+dias = 180
 solo_personas_fisicas = true

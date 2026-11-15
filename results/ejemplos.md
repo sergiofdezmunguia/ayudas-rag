@@ -111,3 +111,88 @@ Pregunta: gano unos 16.000 euros brutos al año como asalariado, ¿tengo alguna 
 
 Aviso: esto no es asesoramiento fiscal ni jurídico. Son fragmentos literales de normas y anuncios oficiales que pueden no aplicarse a tu caso, haber cambiado o tener requisitos adicionales. Consulta la fuente oficial o a un profesional. Basado en datos de la Agencia Estatal Boletín Oficial del Estado (https://www.boe.es).
 ```
+
+## Fase 2: Canarias y convocatorias de 91-180 días
+
+Mismo modo (dense, top 3). Las normas canarias con consolidación «Desactualizado» en el BOE llevan un aviso. Los dos primeros muestran el fallo más frecuente en Canarias: la disposición adicional cuarta (medidas extraordinarias para 2022-2023, 27 fragmentos) se cuela en el top 3. En el segundo, la deducción por familias monoparentales (art. 11 ter) ni siquiera aparece.
+
+```
+Pregunta: vivo de alquiler en Tenerife, ¿cuánto me puedo desgravar en la renta?
+
+[1] Artículo 15 bis. Deducción por arrendamiento de vivienda habitual vinculado a determinadas operación de dación en pago.
+    Decreto-Legislativo 1/2009, de 21 de abril, por el que se aprueba el Texto Refundido de las disposiciones legales vigentes dictadas por la Comunidad Autónoma de
+    TÍTULO II Normas sustantivas sobre tributos cedidis de naturaleza directa > CAPÍTULO I Impuesto sobre la renta de las personas físicas
+    Norma · versión vigente desde 20260101
+    Ojo: el BOE marca la consolidación de esta norma como «desactualizada» (revisada el 14-08-2026): puede faltar alguna modificación reciente. Comprueba el boletín autonómico.
+    «En los supuestos de arrendamiento vinculados a determinadas operaciones de dación en pago contempladas en el artículo 35 bis de este texto refundido, los arrendatarios podrán deducirse el 25% de las cantidades satisfechas durante el ejercicio correspondiente, por el arrendamiento de la vivienda habitual, con un máximo de 1.200 euros anuales y con un nivel de renta no superior a 46.455 euros.»
+    Fuente: https://www.boe.es/buscar/act.php?id=BOC-j-2009-90008#a1-7
+
+[2] Disposición adicional cuarta. Medidas extraordinarias en el ámbito del impuesto sobre la renta de las personas físicas, por la situación inflacionaria.
+    Decreto-Legislativo 1/2009, de 21 de abril, por el que se aprueba el Texto Refundido de las disposiciones legales vigentes dictadas por la Comunidad Autónoma de
+    Norma · versión vigente desde 20240101
+    Ojo: el BOE marca la consolidación de esta norma como «desactualizada» (revisada el 14-08-2026): puede faltar alguna modificación reciente. Comprueba el boletín autonómico.
+    «Durante el período impositivo 2022 y 2023, los contribuyentes que perciban prestaciones por desempleo podrán deducir la cantidad de 120 euros siempre que se cumplan los siguientes requisitos:»
+    «Estas cuantías serán para cada período impositivo las equivalentes en la normativa reguladora del impuesto sobre la renta de las personas físicas a efectos de la obligación de declarar.»
+    Fuente: https://www.boe.es/buscar/act.php?id=BOC-j-2009-90008#da-3
+
+[3] Artículo 15. Deducción por alquiler de vivienda habitual.
+    Decreto-Legislativo 1/2009, de 21 de abril, por el que se aprueba el Texto Refundido de las disposiciones legales vigentes dictadas por la Comunidad Autónoma de
+    TÍTULO II Normas sustantivas sobre tributos cedidis de naturaleza directa > CAPÍTULO I Impuesto sobre la renta de las personas físicas
+    Norma · versión vigente desde 20260101
+    Ojo: el BOE marca la consolidación de esta norma como «desactualizada» (revisada el 14-08-2026): puede faltar alguna modificación reciente. Comprueba el boletín autonómico.
+    «b) Que las cantidades satisfechas en concepto de alquiler excedan del 10% de las rentas obtenidas en el periodo impositivo, que a estos efectos se descontará, si lo hubiere, en el importe de las subvenciones que por este concepto hubiera percibido el arrendatario.»
+    «El importe de la deducción prevista tendrá un máximo de 760 euros anuales si el contribuyente tiene una edad inferior a 40 años o una edad igual o superior a 75 años y cumple los anteriores requisitos.»
+    Fuente: https://www.boe.es/buscar/act.php?id=BOC-j-2009-90008#a15
+
+Aviso: esto no es asesoramiento fiscal ni jurídico. Son fragmentos literales de normas y anuncios oficiales que pueden no aplicarse a tu caso, haber cambiado o tener requisitos adicionales. Consulta la fuente oficial o a un profesional. Basado en datos de la Agencia Estatal Boletín Oficial del Estado (https://www.boe.es).
+```
+
+```
+Pregunta: soy madre sola con dos hijos en Lanzarote, ¿qué me puedo deducir?
+
+[1] Disposición adicional cuarta. Medidas extraordinarias en el ámbito del impuesto sobre la renta de las personas físicas, por la situación inflacionaria.
+    Decreto-Legislativo 1/2009, de 21 de abril, por el que se aprueba el Texto Refundido de las disposiciones legales vigentes dictadas por la Comunidad Autónoma de
+    Norma · versión vigente desde 20240101
+    Ojo: el BOE marca la consolidación de esta norma como «desactualizada» (revisada el 14-08-2026): puede faltar alguna modificación reciente. Comprueba el boletín autonómico.
+    «Se considerarán descendientes a los efectos de la presente deducción:»
+    «c) Los descendientes a que se refieren las letras a) y b) anteriores que, sin convivir con el contribuyente, dependan económicamente de él y estén internados en centros especializados.»
+    Fuente: https://www.boe.es/buscar/act.php?id=BOC-j-2009-90008#da-3
+
+[2] Artículo 7. Deducción por gastos de estudios de educación superior.
+    Decreto-Legislativo 1/2009, de 21 de abril, por el que se aprueba el Texto Refundido de las disposiciones legales vigentes dictadas por la Comunidad Autónoma de
+    TÍTULO II Normas sustantivas sobre tributos cedidis de naturaleza directa > CAPÍTULO I Impuesto sobre la renta de las personas físicas
+    Norma · versión vigente desde 20260101
+    Ojo: el BOE marca la consolidación de esta norma como «desactualizada» (revisada el 14-08-2026): puede faltar alguna modificación reciente. Comprueba el boletín autonómico.
+    «Los contribuyentes podrán deducirse por cada descendiente o adoptado soltero menor de 25 años que dependa económicamente de ellas y que curse los estudios de educación superior previstos en el apartado 5 del artículo 3 de la Ley Orgánica 2/2006, de 3 de mayo, de Educación:»
+    «b) 900 euros cuando, cursando estudios de educación superior en la misma isla en la que se encuentre la residencia habitual del contribuyente, los descendientes o adoptados trasladen su domicilio a una vivienda arrendada, colegio mayor o menor o residencia de estudiantes, situado en el municipio donde radique el centro docente de educación superior o municipio limítrofe, pero, en todo caso, distinto al municipio de residencia habitual de contribuyente.»
+    Fuente: https://www.boe.es/buscar/act.php?id=BOC-j-2009-90008#a7
+
+[3] Disposición adicional primera. Medidas extraordinarias en el ámbito del impuesto sobre la renta de las personas físicas, por la erupción volcánica de la isla de La Palma.
+    Decreto-Legislativo 1/2009, de 21 de abril, por el que se aprueba el Texto Refundido de las disposiciones legales vigentes dictadas por la Comunidad Autónoma de
+    Norma · versión vigente desde 20220101
+    Ojo: el BOE marca la consolidación de esta norma como «desactualizada» (revisada el 14-08-2026): puede faltar alguna modificación reciente. Comprueba el boletín autonómico.
+    «– 300 euros por los vehículos a motor dotados de más de dos plazas.»
+    «– 50 euros por los vehículos a motor dotados de una sola plaza.»
+    Fuente: https://www.boe.es/buscar/act.php?id=BOC-j-2009-90008#pr
+
+Aviso: esto no es asesoramiento fiscal ni jurídico. Son fragmentos literales de normas y anuncios oficiales que pueden no aplicarse a tu caso, haber cambiado o tener requisitos adicionales. Consulta la fuente oficial o a un profesional. Basado en datos de la Agencia Estatal Boletín Oficial del Estado (https://www.boe.es).
+```
+
+```
+Pregunta: cumplo 18 años este año, ¿cómo pido el bono cultural joven?
+
+[1] Extracto de la Orden de 10 de junio de 2026 del Ministerio de Cultura por la que se convoca el procedimiento para la concesión de las ayudas del programa Bono Cultural Joven 2026.
+    Convocatoria (extracto BDNS en BOE) · publicado 20260622
+    «La cuantía máxima destinada a financiar la ayuda del Bono Cultural Joven asciende a 160.000.000 euros, con un importe de 400 euros por persona beneficiaria.»
+    «Las personas interesadas en obtener la ayuda del Bono Cultural Joven de 2026 deberán presentar su solicitud obligatoriamente por medios electrónicos, de conformidad con el artículo 14.3 de la Ley 39/2015, de 1 de octubre, del Procedimiento Administrativo Común de las Administraciones Públicas y el artículo 10.3 del Real Decreto 401/2026, 20 de mayo, cumplimentando el formulario disponible en la plataforma web https://bonoculturajoven.gob.es.»
+    Fuente: https://www.boe.es/diario_boe/txt.php?id=BOE-B-2026-21271
+
+[2] Artículo 69. Pago de la ayuda a la persona beneficiaria.
+    Real Decreto 42/2022, de 18 de enero, por el que se regula el Bono Alquiler Joven y el Plan Estatal para el acceso a la vivienda 2022-2025.
+    TÍTULO II Del Plan Estatal para el acceso a la vivienda 2022-2025 > CAPÍTULO VII Programa de incremento del parque público de viviendas
+    Norma · versión vigente desde 20220120
+    «El abono de la subvención a la persona beneficiaria podrá realizarse de una sola vez y con anterioridad a la adquisición de la vivienda, si bien expresamente condicionada a su formalización e inscripción en el registro de la propiedad.»
+    Fuente: https://www.boe.es/buscar/act.php?id=BOE-A-2022-802#a6-11
+
+Aviso: esto no es asesoramiento fiscal ni jurídico. Son fragmentos literales de normas y anuncios oficiales que pueden no aplicarse a tu caso, haber cambiado o tener requisitos adicionales. Consulta la fuente oficial o a un profesional. Basado en datos de la Agencia Estatal Boletín Oficial del Estado (https://www.boe.es).
+```

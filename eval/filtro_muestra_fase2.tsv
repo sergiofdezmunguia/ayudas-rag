@@ -1,0 +1,83 @@
+# Muestra aleatoria (random.Random(2026).sample, 80 de 162) de extractos BDNS en el BOE del 20-05-2026 al 17-08-2026.
+# personas_fisicas: etiqueta manual (1 = los beneficiarios incluyen personas físicas). Un solo anotador.
+id	fecha	personas_fisicas	nota
+BOE-B-2026-27173	20260815	0	
+BOE-B-2026-26842	20260812	1	
+BOE-B-2026-26629	20260808	0	dudoso: Erasmus+ Juventud (sobre todo organizaciones)
+BOE-B-2026-26402	20260807	0	
+BOE-B-2026-26096	20260804	1	modificación de los Premios Nacionales de Fin de Carrera (premian a titulados)
+BOE-B-2026-25866	20260801	0	
+BOE-B-2026-25819	20260731	0	
+BOE-B-2026-25567	20260729	1	becas a funcionarios (promoción interna)
+BOE-B-2026-25516	20260728	0	ayuntamientos; el filtro se activa por «Comunidades Autónomas»
+BOE-B-2026-25517	20260728	0	
+BOE-B-2026-25203	20260725	0	
+BOE-B-2026-25205	20260725	0	
+BOE-B-2026-25208	20260725	0	
+BOE-B-2026-25209	20260725	0	
+BOE-B-2026-24901	20260722	1	incluye personas físicas con actividad económica
+BOE-B-2026-24459	20260717	0	
+BOE-B-2026-24116	20260714	0	
+BOE-B-2026-24140	20260714	1	premio a investigadores individuales
+BOE-B-2026-23632	20260709	0	
+BOE-B-2026-23633	20260709	1	Premios Nacionales de Fin de Carrera
+BOE-B-2026-22644	20260703	0	diputaciones y cabildos; «Comunidades Autónomas»
+BOE-B-2026-22523	20260702	1	
+BOE-B-2026-22550	20260702	1	
+BOE-B-2026-22411	20260701	1	becas AECID a empleados públicos extranjeros
+BOE-B-2026-22304	20260630	1	becas a opositores
+BOE-B-2026-22305	20260630	1	titulares de explotaciones agrarias (personas físicas o jurídicas)
+BOE-B-2026-22306	20260630	0	
+BOE-B-2026-22340	20260630	0	
+BOE-B-2026-22341	20260630	0	
+BOE-B-2026-22027	20260627	0	
+BOE-B-2026-22028	20260627	0	
+BOE-B-2026-22029	20260627	1	titulares de explotaciones agrarias
+BOE-B-2026-22031	20260627	0	
+BOE-B-2026-22032	20260627	0	
+BOE-B-2026-22035	20260627	0	
+BOE-B-2026-21634	20260625	0	
+BOE-B-2026-21543	20260624	0	
+BOE-B-2026-21414	20260623	0	
+BOE-B-2026-21416	20260623	0	
+BOE-B-2026-21435	20260623	0	
+BOE-B-2026-21238	20260622	0	diputaciones y cabildos; «Comunidades Autónomas»
+BOE-B-2026-21271	20260622	1	
+BOE-B-2026-21272	20260622	1	
+BOE-B-2026-20843	20260619	0	
+BOE-B-2026-20702	20260618	1	premio de investigación; extracto sin sección de beneficiarios
+BOE-B-2026-20705	20260618	0	
+BOE-B-2026-20741	20260618	0	
+BOE-B-2026-20569	20260617	0	dudoso: protección social en el fútbol (federaciones)
+BOE-B-2026-20432	20260616	0	
+BOE-B-2026-20132	20260613	1	becas a titulados («Titulado», en singular)
+BOE-B-2026-19775	20260612	0	
+BOE-B-2026-19624	20260611	1	
+BOE-B-2026-19649	20260611	0	
+BOE-B-2026-19378	20260609	0	
+BOE-B-2026-19384	20260609	1	
+BOE-B-2026-19103	20260606	0	
+BOE-B-2026-18853	20260605	0	
+BOE-B-2026-18621	20260604	0	
+BOE-B-2026-18665	20260604	0	
+BOE-B-2026-18667	20260604	1	certamen Jóvenes Investigadores; ampliación de plazo sin sección de beneficiarios
+BOE-B-2026-18498	20260603	1	personas mayores y con discapacidad (y entidades)
+BOE-B-2026-18331	20260602	1	
+BOE-B-2026-17965	20260530	0	
+BOE-B-2026-17577	20260529	1	becas a funcionarios (promoción interna)
+BOE-B-2026-17583	20260529	0	
+BOE-B-2026-17477	20260528	0	
+BOE-B-2026-17478	20260528	0	
+BOE-B-2026-17505	20260528	0	
+BOE-B-2026-17507	20260528	1	
+BOE-B-2026-17382	20260527	1	
+BOE-B-2026-17407	20260527	0	
+BOE-B-2026-17409	20260527	0	
+BOE-B-2026-17295	20260526	0	
+BOE-B-2026-16934	20260523	0	
+BOE-B-2026-16630	20260522	1	dudoso: una modalidad premia la trayectoria de pequeños comerciantes
+BOE-B-2026-16450	20260521	0	
+BOE-B-2026-16457	20260521	0	
+BOE-B-2026-16524	20260521	0	
+BOE-B-2026-16328	20260520	1	
+BOE-B-2026-16360	20260520	0	
