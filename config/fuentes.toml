@@ -1,0 +1,50 @@
+# Subconjunto acotado del corpus. Todas las fuentes son del BOE (datos abiertos).
+# "Basado en datos de la Agencia Estatal Boletín Oficial del Estado" — https://www.boe.es
+
+# Fecha de corte para elegir la versión vigente de cada artículo (AAAAMMDD).
+fecha_corte = "20261115"
+
+[[norma]]
+id = "BOE-A-2006-20764"
+nota = "Ley 35/2006 del IRPF: deducciones estatales (maternidad, familia numerosa, donativos, alquiler transitorio...)"
+
+[[norma]]
+id = "BOE-A-2007-6820"
+nota = "Reglamento del IRPF (requisitos de deducciones)"
+
+[[norma]]
+id = "BOCM-m-2010-90068"
+nota = "DLeg 1/2010 Comunidad de Madrid, tributos cedidos: deducciones autonómicas del IRPF"
+
+[[norma]]
+id = "BOE-A-2026-8872"
+nota = "RD 326/2026, Plan Estatal de Vivienda 2026-2030"
+
+[[norma]]
+id = "BOE-A-2022-802"
+nota = "RD 42/2022, Bono Alquiler Joven y Plan Estatal de acceso a la vivienda 2022-2025"
+
+[[norma]]
+id = "BOE-A-2023-12203"
+nota = "Ley 12/2023 por el derecho a la vivienda"
+
+[[norma]]
+id = "BOE-A-2021-21007"
+nota = "Ley 19/2021 del ingreso mínimo vital"
+
+[[norma]]
+id = "BOE-A-2002-4378"
+nota = "Ley 15/2001 de Renta Mínima de Inserción de la Comunidad de Madrid"
+
+[[norma]]
+id = "BOE-A-2003-21052"
+nota = "Ley 40/2003 de protección a las familias numerosas"
+
+[[norma]]
+id = "BOE-A-2002-25039"
+nota = "Ley 49/2002 de mecenazgo (incentivos fiscales a donativos)"
+
+[extractos]
+# Extractos BDNS publicados en el BOE (sección V-B) en los últimos N días hasta fecha_corte.
+dias = 90
+solo_personas_fisicas = true

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<response><status><code>200</code><text>ok</text></status>
+<data><texto>
+  <bloque id="preambulo" tipo="preambulo"><version id_norma="X" fecha_publicacion="20200101" fecha_vigencia="20200101"><p class="parrafo">Preámbulo de prueba.</p></version></bloque>
+  <bloque id="ti" tipo="encabezado" titulo="TÍTULO I"><version id_norma="X" fecha_publicacion="20200101" fecha_vigencia="20200101"><p class="titulo">TÍTULO I</p></version></bloque>
+  <bloque id="a1" tipo="precepto" titulo="Artículo 1">
+    <version id_norma="X" fecha_publicacion="20200101" fecha_vigencia="20200101">
+      <p class="articulo">Artículo 1. Deducción ficticia por alquiler.</p>
+      <p class="parrafo">Los contribuyentes podrán deducir el 10 por ciento de las cantidades pagadas.</p>
+    </version>
+    <version id_norma="Y" fecha_publicacion="20240101" fecha_vigencia="20240101">
+      <p class="articulo">Artículo 1. Deducción ficticia por alquiler.</p>
+      <p class="parrafo">Los contribuyentes menores de cuarenta años podrán deducir el 30 por ciento de las cantidades pagadas por el <em>alquiler</em> de su vivienda habitual.</p>
+      <p class="parrafo">El límite será de 1.000 euros.</p>
+    </version>
+    <version id_norma="Z" fecha_publicacion="20300101" fecha_vigencia="20300101">
+      <p class="articulo">Artículo 1. Deducción ficticia por alquiler.</p>
+      <p class="parrafo">Versión futura que no debe usarse.</p>
+    </version>
+  </bloque>
+  <bloque id="a2" tipo="precepto" titulo="Artículo 2">
+    <version id_norma="X" fecha_publicacion="20200101" fecha_vigencia="20200101">
+      <p class="articulo">Artículo 2.</p>
+      <p class="parrafo">(Derogado)</p>
+    </version>
+  </bloque>
+  <bloque id="a3" tipo="precepto" titulo="Artículo 3">
+    <version id_norma="X" fecha_publicacion="20200101" fecha_vigencia="20200101">
+      <p class="articulo">Artículo 3. Deducción ficticia por nacimiento de hijos.</p>
+      <p class="parrafo">Por cada hijo nacido se podrán deducir 600 euros.</p>
+    </version>
+  </bloque>
+  <bloque id="a4" tipo="precepto" titulo="Artículo 4">
+    <version id_norma="X" fecha_publicacion="20300101" fecha_vigencia="20300101">
+      <p class="articulo">Artículo 4. Artículo que aún no ha entrado en vigor.</p>
+      <p class="parrafo">Texto futuro.</p>
+    </version>
+  </bloque>
+</texto></data></response>

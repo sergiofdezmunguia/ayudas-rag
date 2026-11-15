@@ -1,0 +1,39 @@
+[project]
+name = "ayudas-rag"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "sergiofdezmunguia", email = "sergiofdezmunguia@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=2.4.6",
+    "requests>=2.34.2",
+    "sentence-transformers>=6.3.0",
+    "threadpoolctl>=3.8.0",
+    "torch>=2.15.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.23,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+]
+
+[project.scripts]
+ayudas = "ayudas_rag.cli:main"

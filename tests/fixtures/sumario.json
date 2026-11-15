@@ -1,0 +1,8 @@
+{"status":{"code":"200"},"data":{"sumario":{"diario":[{"numero":"1","seccion":[
+ {"codigo":"3","nombre":"III. Otras disposiciones","departamento":[{"codigo":"1","nombre":"MINISTERIO X","epigrafe":[{"nombre":"Becas","item":[{"identificador":"BOE-A-2099-1","titulo":"Resolución por la que se convocan becas"}]}]}]},
+ {"codigo":"5B","nombre":"V. Anuncios. - B. Otros anuncios oficiales","departamento":[
+   {"codigo":"2","nombre":"MINISTERIO Y","item":[
+     {"identificador":"BOE-B-2099-10","titulo":"Extracto de la Resolución por la que se convocan ayudas ficticias para jóvenes"},
+     {"identificador":"BOE-B-2099-11","titulo":"Anuncio de información pública de un proyecto"}]},
+   {"codigo":"3","nombre":"MINISTERIO Z","item":{"identificador":"BOE-B-2099-12","titulo":"Extracto de la Orden por la que se convocan subvenciones a ayuntamientos"}}
+ ]}]}]}}}
