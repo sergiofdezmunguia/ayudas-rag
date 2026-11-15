@@ -1,0 +1,96 @@
+# Todos los extractos BDNS del BOC (sección V) del 20-05-2026 al 13-11-2026 (92; no es una muestra).
+# personas_fisicas: etiqueta manual (1 = los beneficiarios incluyen personas físicas). Un solo anotador.
+# Etiquetado ANTES de mirar qué decidía el filtro sobre cada uno, con el mismo criterio que filtro_muestra_fase2.tsv.
+id	fecha	personas_fisicas	nota
+BOC-A-2026-098-1695		1	titulares de explotaciones agrarias (remite a la convocatoria original)
+BOC-A-2026-098-1696		0	
+BOC-A-2026-098-1702		0	
+BOC-A-2026-098-1703		1	empresas, «particulares» y tercer sector
+BOC-A-2026-098-1705		1	
+BOC-A-2026-104-1835		1	agricultores (compromisos agroambientales)
+BOC-A-2026-106-1862		1	titulares de explotaciones
+BOC-A-2026-106-1863		0	
+BOC-A-2026-109-1907		1	viticultoras
+BOC-A-2026-109-1908		1	
+BOC-A-2026-110-1927		1	dudoso: remite a las bases; las de áreas de influencia de parques nacionales suelen incluir particulares
+BOC-A-2026-111-1940		1	ganaderos (remite a la convocatoria original)
+BOC-A-2026-111-1941		1	industrias lácteas y personas productoras
+BOC-A-2026-111-1942		0	dudoso: las beneficiarias son entidades; los jóvenes son los contratados
+BOC-A-2026-112-1968		1	premios a alumnado
+BOC-A-2026-114-1996		1	ganaderos titulares de explotación
+BOC-A-2026-114-1999		1	dudoso: empresas, incluidos titulares de licencias de taxi o VTC
+BOC-A-2026-114-2001		1	personal docente e investigador
+BOC-A-2026-114-2002		1	alumnado extranjero
+BOC-A-2026-115-2005		0	
+BOC-A-2026-116-2018		1	industrias lácteas y productores
+BOC-A-2026-117-2029		0	dudoso: transformación agroalimentaria (empresas)
+BOC-A-2026-117-2040		1	
+BOC-A-2026-118-2063		1	dudoso: ampliación de crédito del programa propio de investigación (personal investigador)
+BOC-A-2026-123-2159		1	perceptores de ayudas POSEI (agricultores)
+BOC-A-2026-123-2164		0	
+BOC-A-2026-127-2238		1	premios a alumnado
+BOC-A-2026-127-2239		1	
+BOC-A-2026-127-2240		1	premios a alumnado
+BOC-A-2026-129-2253		1	
+BOC-A-2026-131-2296		0	
+BOC-A-2026-131-2302		1	premios a alumnado
+BOC-A-2026-132-2319		1	
+BOC-A-2026-132-2320		1	
+BOC-A-2026-132-2321		1	
+BOC-A-2026-133-2342		1	
+BOC-A-2026-133-2344		1	
+BOC-A-2026-133-2345		1	
+BOC-A-2026-134-2367		1	becas universitarias
+BOC-A-2026-134-2368		1	
+BOC-A-2026-135-2384		1	titulares de explotaciones ganaderas (remite a la convocatoria original)
+BOC-A-2026-135-2390		1	incluye empresarios individuales y profesionales
+BOC-A-2026-135-2394		1	
+BOC-A-2026-136-2410		1	
+BOC-A-2026-136-2414		1	
+BOC-A-2026-137-2424		1	
+BOC-A-2026-138-2452		0	
+BOC-A-2026-143-2557		0	
+BOC-A-2026-143-2560		1	premios a alumnado
+BOC-A-2026-146-2622		1	productoras audiovisuales independientes (personas físicas o jurídicas)
+BOC-A-2026-148-2657		0	
+BOC-A-2026-150-2695		0	dudoso: transformación y comercialización pesquera (empresas)
+BOC-A-2026-154-2775		0	
+BOC-A-2026-155-2791		1	
+BOC-A-2026-157-2823		1	ganaderos
+BOC-A-2026-157-2824		1	productores de porcino
+BOC-A-2026-157-2827		1	ampliación de plazo de becas universitarias; sin sección de beneficiarios
+BOC-A-2026-159-2855		0	
+BOC-A-2026-159-2859		0	infraestructuras de investigación (entidades)
+BOC-A-2026-160-2871		1	
+BOC-A-2026-160-2872		0	
+BOC-A-2026-161-2897		1	estudiantes de doctorado
+BOC-A-2026-162-2918		1	corrección de errores de la convocatoria de largometrajes; sin sección de beneficiarios
+BOC-A-2026-171-3074		1	
+BOC-A-2026-174-3115		1	empresas, autónomos o entidades de economía social
+BOC-A-2026-177-3155		0	
+BOC-A-2026-178-3168		1	plazo extraordinario de becas universitarias; sin sección de beneficiarios
+BOC-A-2026-181-3210		1	becas a alumnado de máster; beneficiarios remitidos a las bases
+BOC-A-2026-184-3246		1	ampliación de plazo de ayudas a alumnado con TDAH; sin sección de beneficiarios
+BOC-A-2026-189-3294		0	
+BOC-A-2026-192-3335		1	premios a alumnado
+BOC-A-2026-195-3367		1	ganaderos
+BOC-A-2026-195-3374		1	estudiantado y personal universitario
+BOC-A-2026-199-3433		1	alumnado de 0 a 3 años (las familias)
+BOC-A-2026-204-3528		0	dudoso: operadores que introducen animales (empresas)
+BOC-A-2026-204-3534		1	
+BOC-A-2026-205-3544		1	jóvenes agricultores
+BOC-A-2026-206-3564		1	
+BOC-A-2026-208-3598		1	personal docente e investigador
+BOC-A-2026-213-3673		1	
+BOC-A-2026-214-3694		0	
+BOC-A-2026-216-3717		1	productores individuales o agrupados
+BOC-A-2026-218-3744		0	
+BOC-A-2026-219-3765		0	dudoso: transformación y comercialización pesquera (empresas)
+BOC-A-2026-219-3770		1	ampliación de crédito de proyectos culturales (incluye autónomos); sin sección de beneficiarios
+BOC-A-2026-220-3787		0	
+BOC-A-2026-220-3790		1	
+BOC-A-2026-221-3819		1	ampliación de crédito de bolsas de viaje para investigadores; sin sección de beneficiarios
+BOC-A-2026-224-3882		1	
+BOC-A-2026-227-3924		1	dudoso: propietarios de canales de carne a la salida del matadero
+BOC-A-2026-227-3925		1	
+BOC-A-2026-227-3930		1	modificación de ayudas a estudiantes y personal; sin sección de beneficiarios

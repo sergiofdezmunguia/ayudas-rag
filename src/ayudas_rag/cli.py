@@ -59,7 +59,7 @@ def cmd_eval(args) -> None:
     from pathlib import Path
 
     from .evaluate import (check_questions, confusion_territorial, evaluate, load_questions, report_md,
-                           subset_metrics, tune_hybrid_weight)
+                           subset_metrics, tune_hybrid_weight, tune_rerank)
     from .pipeline import ROOT, load_searcher
 
     qs = load_questions(Path(args.preguntas))
@@ -75,29 +75,48 @@ def cmd_eval(args) -> None:
              "legislacion": sum(d.source == "legislacion" for d in docs),
              "convocatorias": sum(d.source == "convocatoria" for d in docs),
              "normas": len({d.norm_id for d in docs if d.source == "legislacion"})}
-    # Subconjuntos: preguntas de v0.1 (q01-q42) frente a las añadidas en la fase 2 (nota «fase 2 ...»).
-    groups = {"v0.1 (q01-q42)": [q for q in qs if not q.get("nota", "").startswith("fase 2")],
-              "fase 2: Canarias": [q for q in qs if q.get("nota", "").startswith("fase 2 (Canarias")],
-              "fase 2: convocatorias 91-180 días": [q for q in qs if q.get("nota", "").startswith("fase 2 (convoc")]}
-    subsets = {k: (len(v), subset_metrics(res, {q["id"] for q in v})) for k, v in groups.items() if v}
+    # Subconjuntos: preguntas de v0.1 (q01-q42) frente a las añadidas en cada fase (nota «fase N (...)»).
+    nota = lambda q: q.get("nota", "")  # noqa: E731
+    groups = {"v0.1 (q01-q42)": [q for q in qs if not nota(q).startswith("fase")],
+              "fase 2: Canarias": [q for q in qs if nota(q).startswith("fase 2 (Canarias")],
+              "fase 2: convocatorias 91-180 días": [q for q in qs if nota(q).startswith("fase 2 (convoc")],
+              "fase 3: Canarias": [q for q in qs if nota(q).startswith("fase 3 (Canarias")],
+              "fase 3: convocatorias BOC": [q for q in qs if nota(q).startswith("fase 3 (BOC")]}
     conf = confusion_territorial(s, res, qs)
+    rr = tune_rerank(s, qs, test_bases=("bm25", "dense", tuning["best"]))
+    # Por subconjunto también el modo con la reordenación elegida (todas las preguntas: dev + test, descriptivo).
+    chosen = evaluate(s, qs, ("dense" + rr["best"],)) if rr["best"] else {"por_pregunta": {}}
+    both = {"por_pregunta": {**res["por_pregunta"], **chosen["por_pregunta"]}}
+    subsets = {k: (len(v), subset_metrics(both, {q["id"] for q in v})) for k, v in groups.items() if v}
+    full = evaluate(s, groups["fase 2: Canarias"], ("dense", tuning["best"]) +
+                    (("dense" + rr["best"], tuning["best"] + rr["best"]) if rr["best"] else ()))
+    iman_id = "BOC-j-2009-90008#da-3"
+    iman = {"doc": "DA 4.ª canaria, " + iman_id, "n": len(groups["fase 2: Canarias"]),
+            "modos": {m: sum(iman_id in r["top5"] for r in per) for m, per in full["por_pregunta"].items()}}
     out = ROOT / "results"
     out.mkdir(exist_ok=True)
     antes_p = out / "metricas_v0.1.json"
     antes = json.loads(antes_p.read_text()) if antes_p.exists() else None
+    f2_p = out / "metricas_fase2.json"
+    antes_f2 = json.loads(f2_p.read_text()) if f2_p.exists() else None
     res["ajuste"] = tuning
     res["glosario"] = extra["modos"]
     res["subconjuntos"] = {k: agg for k, (_, agg) in subsets.items()}
     res["confusion_territorial"] = conf
+    res["reordenacion"] = {k: v for k, v in rr.items() if k != "test_por_pregunta"}
+    res["iman"] = iman
     res["glosario_subconjuntos"] = {k: subset_metrics(extra, {q["id"] for q in v}) for k, v in groups.items() if v}
     (out / "metricas.json").write_text(json.dumps(res, ensure_ascii=False, indent=1))
     (out / "informe.md").write_text(report_md(res, qs, stats, tuning, extra, subsets, conf,
-                                                  {k: {q["id"] for q in v} for k, v in groups.items() if v}, antes))
+                                                  {k: {q["id"] for q in v} for k, v in groups.items() if v}, antes,
+                                                  rr, iman, antes_f2=antes_f2))
     print("ajuste:", tuning["best"], {m: round(v["mrr"], 3) for m, v in tuning["test"].items()})
     for m, agg in {**res["modos"], **extra["modos"]}.items():
         print(m, " ".join(f"{k}={v:.3f}" for k, v in agg.items() if k in ("recall@5", "mrr", "ndcg@10")))
     for name, (n, agg) in subsets.items():
         print(name, n, {m: round(a["mrr"], 3) for m, a in agg.items()})
+    print("reordenación elegida en dev:", rr["best"] or "(ninguna)", {m: round(v["mrr"], 3) for m, v in rr["test"].items()})
+    print("imán:", iman["modos"])
     print("confusión CCAA:", {m: round(v, 3) for m, v in conf["modos"].items()})
 
 
@@ -105,6 +124,7 @@ def cmd_filtro(args) -> None:
     """Precisión/exhaustividad del filtro de personas físicas frente a una muestra etiquetada (solo caché)."""
     from .http import CachedFetcher
     from .pipeline import CACHE
+    from .sources import boc_extractos as bc
     from .sources import boe_extractos as bx
 
     f = CachedFetcher(CACHE, offline=True)
@@ -113,7 +133,10 @@ def cmd_filtro(args) -> None:
         if line.startswith(("#", "id\t")) or not line.strip():
             continue
         i, _, lab, *_ = line.rstrip("\n").split("\t")
-        _, paras = bx.parse_txt(f.get(bx.TXT.format(id=i), accept="text/html").decode("utf-8", "replace"))
+        if i.startswith("BOC-"):
+            paras = bc.parse_anuncio(f.get(bc.url_de_cve(i), accept="text/html").decode("utf-8", "replace"))[2]
+        else:
+            _, paras = bx.parse_txt(f.get(bx.TXT.format(id=i), accept="text/html").decode("utf-8", "replace"))
         etiquetas[i], decision[i] = lab == "1", bx.es_para_personas_fisicas(paras)
     r = bx.evaluar_filtro(etiquetas, decision)
     print(json.dumps(r, ensure_ascii=False))
@@ -135,7 +158,7 @@ def main(argv=None) -> None:
     a.set_defaults(func=cmd_index)
     a = sp.add_parser("ask", help="pregunta y respuesta extractiva con citas")
     a.add_argument("pregunta")
-    a.add_argument("--mode", default="dense", help="bm25 | bm25x | dense | hybrid[@w] | hybridx[@w] (por defecto: dense, el mejor en la evaluación)")
+    a.add_argument("--mode", default="dense+v5", help="bm25 | bm25x | dense | hybrid[@w] | hybridx[@w], con sufijos opcionales +v<n> (baja n puestos los preceptos vencidos) y +l<b> (penaliza documentos largos). Por defecto: dense+v5, el mejor en la evaluación (fase 3)")
     a.add_argument("-n", type=int, default=4)
     a.set_defaults(func=cmd_ask)
     a = sp.add_parser("eval", help="evaluación de recuperación")

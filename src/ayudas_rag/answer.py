@@ -6,11 +6,13 @@ from dataclasses import dataclass
 
 from .pipeline import Hit, Searcher
 from .text import expand_query, split_sentences, tokenize
+from .vigencia import ejercicios_acotados, vencido
 
 AVISO = ("Aviso: esto no es asesoramiento fiscal ni jurídico. Son fragmentos literales de normas y "
          "anuncios oficiales que pueden no aplicarse a tu caso, haber cambiado o tener requisitos "
          "adicionales. Consulta la fuente oficial o a un profesional. "
          "Basado en datos de la Agencia Estatal Boletín Oficial del Estado (https://www.boe.es).")
+AVISO_BOC = "Fuente de las convocatorias canarias: Boletín Oficial de Canarias (https://www.gobiernodecanarias.org/boc/)."
 
 
 @dataclass
@@ -26,13 +28,27 @@ class Citation:
     aviso: str = ""  # p. ej. consolidación desactualizada en el BOE
 
 
-def aviso_documento(doc) -> str:
+def aviso_vigencia(doc, anio_corte: int | None) -> str:
+    if not anio_corte or doc.source != "legislacion" or not vencido(doc.heading, doc.text, anio_corte):
+        return ""
+    ys = ejercicios_acotados(doc.heading, doc.text)
+    span = str(ys[0]) if len(ys) == 1 else f"{ys[0]}-{ys[-1]}"
+    return (f"Ojo: medida temporal para {span}; ya no se aplica a la declaración ordinaria en curso "
+            "(solo a declaraciones de esos ejercicios).")
+
+
+def aviso_documento(doc, anio_corte: int | None = None) -> str:
+    v = aviso_vigencia(doc, anio_corte)
+    if doc.meta.get("boletin") == "BOC":
+        return " ".join(x for x in (v, "Versión HTML no oficial del BOC; la oficial es el PDF: "
+                                    + doc.meta.get("pdf_oficial", "")) if x)
     if doc.meta.get("estado_consolidacion") == "Desactualizado":
         f = doc.meta.get("fecha_actualizacion", "")
         return ("Ojo: el BOE marca la consolidación de esta norma como «desactualizada»"
                 + (f" (revisada el {f[6:8]}-{f[4:6]}-{f[:4]})" if len(f) == 8 else "")
-                + ": puede faltar alguna modificación reciente. Comprueba el boletín autonómico.")
-    return ""
+                + ": puede faltar alguna modificación reciente. Comprueba el boletín autonómico."
+                + (" " + v if v else ""))
+    return v
 
 
 def best_sentences(query: str, text: str, idf: dict[str, float], n: int = 2) -> list[str]:
@@ -56,7 +72,7 @@ def answer(searcher: Searcher, query: str, mode: str = "hybrid", n_docs: int = 4
             heading=h.doc.heading, context=h.chunk.context, norm_title=h.doc.norm_title, url=h.doc.url,
             fecha=h.doc.fecha, source=h.doc.source,
             sentences=best_sentences(query, h.chunk.text, searcher.bm25.idf),
-            score=h.score, aviso=aviso_documento(h.doc),
+            score=h.score, aviso=aviso_documento(h.doc, searcher.anio_corte),
         ))
     return out
 
@@ -66,7 +82,8 @@ def format_answer(query: str, cites: list[Citation]) -> str:
     if not cites:
         lines.append("No he encontrado fragmentos relevantes en el corpus.")
     for i, c in enumerate(cites, 1):
-        tipo = "Convocatoria (extracto BDNS en BOE)" if c.source == "convocatoria" else "Norma"
+        boletin = "BOC" if "gobiernodecanarias.org/boc/" in c.url else "BOE"
+        tipo = f"Convocatoria (extracto BDNS en {boletin})" if c.source == "convocatoria" else "Norma"
         fecha = f"publicado {c.fecha}" if c.source == "convocatoria" else f"versión vigente desde {c.fecha}"
         lines.append(f"[{i}] {c.heading}")
         if c.heading != c.norm_title:
@@ -81,4 +98,6 @@ def format_answer(query: str, cites: list[Citation]) -> str:
         lines.append(f"    Fuente: {c.url}")
         lines.append("")
     lines.append(AVISO)
+    if any("gobiernodecanarias.org/boc/" in c.url for c in cites):
+        lines.append(AVISO_BOC)
     return "\n".join(lines)
