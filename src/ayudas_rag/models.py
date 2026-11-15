@@ -30,10 +30,12 @@ class Chunk:
     heading: str
     norm_title: str
     url: str
+    context: str = ""  # ruta de encabezados: "CAPÍTULO IV ... > Sección 1.ª Ayuda al alquiler de vivienda"
 
     def index_text(self) -> str:
-        """Texto que se indexa: cabecera + título de la norma + fragmento."""
-        return f"{self.heading}\n{self.norm_title}\n{self.text}"
+        """Texto que se indexa: cabecera + ruta + título de la norma + fragmento."""
+        parts = [self.heading, self.context, self.norm_title, self.text]
+        return "\n".join(p for p in parts if p)
 
 
 def write_jsonl(path: Path, rows: Iterable) -> int:

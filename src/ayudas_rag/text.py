@@ -85,6 +85,7 @@ def chunk_document(doc: Document, max_words: int = 220, overlap_words: int = 40)
         chunks.append("\n".join(cur))
     return [
         Chunk(chunk_id=f"{doc.doc_id}::{i}", doc_id=doc.doc_id, text=c, heading=doc.heading,
-              norm_title=doc.norm_title, url=doc.url)
+              norm_title=doc.norm_title, url=doc.url,
+              context=doc.meta.get("ruta", ""))
         for i, c in enumerate(chunks)
     ]

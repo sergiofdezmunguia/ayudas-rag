@@ -16,6 +16,7 @@ AVISO = ("Aviso: esto no es asesoramiento fiscal ni jurídico. Son fragmentos li
 @dataclass
 class Citation:
     heading: str
+    context: str
     norm_title: str
     url: str
     fecha: str
@@ -42,7 +43,7 @@ def answer(searcher: Searcher, query: str, mode: str = "hybrid", n_docs: int = 4
     out = []
     for h in hits:
         out.append(Citation(
-            heading=h.doc.heading, norm_title=h.doc.norm_title, url=h.doc.url,
+            heading=h.doc.heading, context=h.chunk.context, norm_title=h.doc.norm_title, url=h.doc.url,
             fecha=h.doc.fecha, source=h.doc.source,
             sentences=best_sentences(query, h.chunk.text, searcher.bm25.idf),
             score=h.score,
@@ -60,6 +61,8 @@ def format_answer(query: str, cites: list[Citation]) -> str:
         lines.append(f"[{i}] {c.heading}")
         if c.heading != c.norm_title:
             lines.append(f"    {c.norm_title[:160]}")
+        if c.context:
+            lines.append(f"    {c.context[:200]}")
         lines.append(f"    {tipo} · {fecha}")
         for s in c.sentences:
             lines.append(f"    «{s}»")

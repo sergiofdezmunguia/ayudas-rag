@@ -12,6 +12,7 @@
       <p class="articulo">Artículo 1. Deducción ficticia por alquiler.</p>
       <p class="parrafo">Los contribuyentes menores de cuarenta años podrán deducir el 30 por ciento de las cantidades pagadas por el <em>alquiler</em> de su vivienda habitual.</p>
       <p class="parrafo">El límite será de 1.000 euros.</p>
+      <blockquote><p class="nota_pie">Se modifica por el art. 1 de la Ley ficticia 9/2023. <a class="refPost">Ref. BOE-A-2099-9</a>.</p></blockquote>
     </version>
     <version id_norma="Z" fecha_publicacion="20300101" fecha_vigencia="20300101">
       <p class="articulo">Artículo 1. Deducción ficticia por alquiler.</p>
@@ -24,6 +25,7 @@
       <p class="parrafo">(Derogado)</p>
     </version>
   </bloque>
+  <bloque id="ci" tipo="encabezado" titulo="CAPÍTULO I"><version id_norma="X" fecha_publicacion="20200101" fecha_vigencia="20200101"><p class="capitulo_num">CAPÍTULO I</p><p class="capitulo_tit">Familias</p></version></bloque>
   <bloque id="a3" tipo="precepto" titulo="Artículo 3">
     <version id_norma="X" fecha_publicacion="20200101" fecha_vigencia="20200101">
       <p class="articulo">Artículo 3. Deducción ficticia por nacimiento de hijos.</p>
@@ -34,6 +36,12 @@
     <version id_norma="X" fecha_publicacion="20300101" fecha_vigencia="20300101">
       <p class="articulo">Artículo 4. Artículo que aún no ha entrado en vigor.</p>
       <p class="parrafo">Texto futuro.</p>
+    </version>
+  </bloque>
+  <bloque id="da1" tipo="precepto" titulo="Disposición adicional primera">
+    <version id_norma="X" fecha_publicacion="20200101" fecha_vigencia="20200101">
+      <p class="articulo">Disposición adicional primera. Ayuda ficticia.</p>
+      <p class="parrafo">Texto de la disposición.</p>
     </version>
   </bloque>
 </texto></data></response>

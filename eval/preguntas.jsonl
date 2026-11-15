@@ -1,0 +1,34 @@
+{"id": "q01", "pregunta": "soy asalariado de 30 años en Madrid, ¿qué ayudas o deducciones puedo pedir para alquiler?", "relevantes": ["BOCM-m-2010-90068#a8", "BOE-A-2026-8872#a1-45", "BOE-A-2026-8872#a1-28", "BOE-A-2022-802#a6"], "nota": "pregunta guía del proyecto: deducción autonómica + ayudas estatales al alquiler (general y jóvenes) + Bono Alquiler Joven"}
+{"id": "q02", "pregunta": "¿Cuánto me puedo desgravar del alquiler en la Comunidad de Madrid si tengo menos de 40 años?", "relevantes": ["BOCM-m-2010-90068#a8"], "nota": ""}
+{"id": "q03", "pregunta": "Tengo un piso alquilado a un inquilino en Madrid, ¿puedo deducir los gastos de reparaciones y el seguro de impago?", "relevantes": ["BOCM-m-2010-90068#a8-2"], "nota": ""}
+{"id": "q04", "pregunta": "deducción en Madrid por sacar al alquiler una casa que tenía vacía", "relevantes": ["BOCM-m-2010-90068#a8-3"], "nota": ""}
+{"id": "q05", "pregunta": "¿hay alguna deducción en la renta de Madrid por tener un bebé?", "relevantes": ["BOCM-m-2010-90068#a4"], "nota": ""}
+{"id": "q06", "pregunta": "en Madrid, ¿puedo desgravar lo que pago de seguridad social de la empleada de hogar que cuida a mi hijo de 2 años?", "relevantes": ["BOCM-m-2010-90068#a1-2"], "nota": ""}
+{"id": "q07", "pregunta": "desgravación por gastos de colegio, uniformes y clases de idiomas de mis hijos en Madrid", "relevantes": ["BOCM-m-2010-90068#a11"], "nota": ""}
+{"id": "q08", "pregunta": "tengo 32 años y me doy de alta como autónomo por primera vez en Madrid, ¿tengo alguna deducción?", "relevantes": ["BOCM-m-2010-90068#a16"], "nota": ""}
+{"id": "q09", "pregunta": "pedí un préstamo para pagar el máster, ¿puedo deducir los intereses?", "relevantes": ["BOCM-m-2010-90068#a1-4"], "nota": ""}
+{"id": "q10", "pregunta": "trabajo y a la vez estudio un grado con 25 años, ¿me puedo deducir la matrícula?", "relevantes": ["BOCM-m-2010-90068#a1-8"], "nota": ""}
+{"id": "q11", "pregunta": "¿qué deducciones hay por ser familia numerosa?", "relevantes": ["BOCM-m-2010-90068#a1-3", "BOE-A-2006-20764#a81bis"], "nota": "autonómica Madrid + estatal"}
+{"id": "q12", "pregunta": "cuido en casa a mi madre de 70 años, ¿hay deducción autonómica en Madrid?", "relevantes": ["BOCM-m-2010-90068#a7-2", "BOCM-m-2010-90068#a7"], "nota": ""}
+{"id": "q13", "pregunta": "me voy a vivir a un pueblo pequeño de Madrid en riesgo de despoblación, ¿qué beneficios fiscales tengo?", "relevantes": ["BOCM-m-2010-90068#a1-6", "BOCM-m-2010-90068#a1-7"], "nota": ""}
+{"id": "q14", "pregunta": "deducción por los intereses de la hipoteca para jóvenes en la Comunidad de Madrid", "relevantes": ["BOCM-m-2010-90068#a12"], "nota": ""}
+{"id": "q15", "pregunta": "¿qué es la deducción por maternidad de 1.200 euros y quién puede pedirla?", "relevantes": ["BOE-A-2006-20764#a81", "BOE-A-2007-6820#a60"], "nota": "ley + procedimiento reglamentario"}
+{"id": "q16", "pregunta": "¿se puede cobrar por adelantado cada mes la deducción por maternidad?", "relevantes": ["BOE-A-2007-6820#a60", "BOE-A-2006-20764#a81"], "nota": "el abono anticipado está en el reglamento"}
+{"id": "q17", "pregunta": "gano unos 16.000 euros brutos al año como asalariado, ¿tengo alguna deducción por sueldo bajo?", "relevantes": ["BOE-A-2006-20764#da-15"], "nota": ""}
+{"id": "q18", "pregunta": "si pongo placas solares para autoconsumo en casa, ¿cuánto me desgravo?", "relevantes": ["BOE-A-2006-20764#da-16"], "nota": ""}
+{"id": "q19", "pregunta": "desgravación en la renta por comprarme un coche eléctrico", "relevantes": ["BOE-A-2006-20764#da-11"], "nota": ""}
+{"id": "q20", "pregunta": "obras para mejorar la eficiencia energética de la vivienda, ¿qué deducción hay en el IRPF?", "relevantes": ["BOE-A-2006-20764#da-4"], "nota": ""}
+{"id": "q21", "pregunta": "¿cuánto me deduzco en la renta por donar dinero a una ONG?", "relevantes": ["BOE-A-2002-25039#a19", "BOE-A-2006-20764#a68"], "nota": "Ley 49/2002 art. 19 + art. 68.3 LIRPF"}
+{"id": "q22", "pregunta": "compré mi casa con hipoteca en 2010, ¿sigo teniendo la deducción por vivienda habitual?", "relevantes": ["BOE-A-2006-20764#dtdecimoctava", "BOE-A-2007-6820#dtduodecima"], "nota": "régimen transitorio"}
+{"id": "q23", "pregunta": "¿puedo deducir el alquiler en la declaración estatal si mi contrato es de 2013?", "relevantes": ["BOE-A-2006-20764#dtdecimoquinta"], "nota": "régimen transitorio para contratos anteriores a 2015"}
+{"id": "q24", "pregunta": "requisitos para pedir el ingreso mínimo vital", "relevantes": ["BOE-A-2021-21007#a1-2", "BOE-A-2021-21007#a4"], "nota": ""}
+{"id": "q25", "pregunta": "¿cuánto dinero se cobra del ingreso mínimo vital?", "relevantes": ["BOE-A-2021-21007#a1-5"], "nota": ""}
+{"id": "q26", "pregunta": "renta mínima de inserción de la Comunidad de Madrid: ¿quién puede pedirla?", "relevantes": ["BOE-A-2002-4378#a6", "BOE-A-2002-4378#a2"], "nota": ""}
+{"id": "q27", "pregunta": "¿cuántos hijos hacen falta para ser familia numerosa?", "relevantes": ["BOE-A-2003-21052#a2"], "nota": ""}
+{"id": "q28", "pregunta": "¿qué descuentos tiene una familia numerosa en tasas, transporte o matrículas?", "relevantes": ["BOE-A-2003-21052#a12"], "nota": ""}
+{"id": "q29", "pregunta": "bono alquiler joven: requisitos de edad y de ingresos", "relevantes": ["BOE-A-2022-802#a6"], "nota": ""}
+{"id": "q30", "pregunta": "¿durante cuánto tiempo se cobra el bono alquiler joven?", "relevantes": ["BOE-A-2022-802#a1-4"], "nota": ""}
+{"id": "q31", "pregunta": "ayudas para jóvenes que se compran una casa en un pueblo pequeño", "relevantes": ["BOE-A-2026-8872#a1-53", "BOE-A-2026-8872#a1-52"], "nota": "Plan Estatal de Vivienda 2026-2030, cap. IV secc. 4.ª"}
+{"id": "q32", "pregunta": "me van a desahuciar, ¿hay alguna ayuda para pagar un alquiler?", "relevantes": ["BOE-A-2026-8872#a1-37", "BOE-A-2026-8872#a1-36"], "nota": "PEV 2026-2030, cap. IV secc. 2.ª"}
+{"id": "q33", "pregunta": "¿las becas de estudio tributan en el IRPF?", "relevantes": ["BOE-A-2007-6820#a2", "BOE-A-2006-20764#a7"], "nota": "exención en art. 7 LIRPF y desarrollo en art. 2 RIRPF"}
+{"id": "q34", "pregunta": "¿cuánto reduce el IRPF el mínimo por cada hijo?", "relevantes": ["BOE-A-2006-20764#a58", "BOCM-m-2010-90068#a2-3"], "nota": "estatal + autonómico Madrid"}

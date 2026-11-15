@@ -14,11 +14,15 @@ def test_parse_texto_elige_version_vigente_y_salta_derogados():
     docs = bl.parse_texto((FX / "texto_norma.xml").read_bytes(), "BOE-A-2099-1", "Ley ficticia", "Estatal",
                           cutoff="20261115")
     ids = [d.doc_id for d in docs]
-    assert ids == ["BOE-A-2099-1#a1", "BOE-A-2099-1#a3"]  # a2 derogado, a4 futuro
+    assert ids == ["BOE-A-2099-1#a1", "BOE-A-2099-1#a3", "BOE-A-2099-1#da1"]  # a2 derogado, a4 futuro
+    assert docs[0].meta["ruta"] == "TÍTULO I"
+    assert docs[1].meta["ruta"] == "TÍTULO I > CAPÍTULO I Familias"
+    assert docs[2].meta["ruta"] == ""
     a1 = docs[0]
     assert a1.heading == "Artículo 1. Deducción ficticia por alquiler."
     assert "30 por ciento" in a1.text and "alquiler de su vivienda" in a1.text  # texto de <em> incluido
     assert "futura" not in a1.text
+    assert "Se modifica" not in a1.text
     assert a1.fecha == "20240101"
     assert a1.url == "https://www.boe.es/buscar/act.php?id=BOE-A-2099-1#a1"
 

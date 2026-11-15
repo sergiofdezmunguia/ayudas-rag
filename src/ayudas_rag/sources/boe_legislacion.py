@@ -37,18 +37,43 @@ def pick_version(block: ET.Element, cutoff: str) -> ET.Element | None:
     return best
 
 
+_LEVELS = (("libro", 0), ("titulo", 0), ("título", 0), ("texto refundido", 0), ("capitulo", 1), ("capítulo", 1),
+           ("seccion", 2), ("sección", 2), ("subseccion", 3), ("subsección", 3))
+
+
+def heading_level(titulo: str) -> int | None:
+    t = (titulo or "").strip().lower()
+    for pref, lvl in _LEVELS:
+        if t.startswith(pref):
+            return lvl
+    return None
+
+
 def parse_texto(xml_bytes: bytes, norm_id: str, norm_title: str, ambito: str = "",
                 cutoff: str | None = None) -> list[Document]:
     cutoff = cutoff or date.today().strftime("%Y%m%d")
     root = ET.fromstring(xml_bytes)
     docs: list[Document] = []
+    ruta: dict[int, str] = {}  # nivel -> encabezado (título > capítulo > sección > subsección)
     for block in root.iter("bloque"):
-        if block.get("tipo") != "precepto":
+        tipo = block.get("tipo")
+        if tipo == "encabezado":
+            lvl = heading_level(block.get("titulo", ""))
+            v = pick_version(block, cutoff)
+            if lvl is None or v is None:
+                continue
+            txt = " ".join(t for t in (_p_text(p) for p in v.iter("p")) if t)[:200]
+            ruta = {k: val for k, val in ruta.items() if k < lvl}
+            ruta[lvl] = txt
+            continue
+        if tipo != "precepto":
             continue
         v = pick_version(block, cutoff)
         if v is None:
             continue
-        paras = [t for t in (_p_text(p) for p in v.iter("p")) if t]
+        # fuera las notas de consolidación ("Se modifica por...") en <blockquote>/nota_pie
+        paras = [t for t in (_p_text(p) for p in v.iter("p")
+                             if not (p.get("class") or "").startswith("nota_pie")) if t]
         if not paras:
             continue
         heading = paras[0]
@@ -67,6 +92,8 @@ def parse_texto(xml_bytes: bytes, norm_id: str, norm_title: str, ambito: str = "
             url=HUMAN_URL.format(id=norm_id, block=bid),
             ambito=ambito,
             fecha=v.get("fecha_vigencia") or "",
+            # las disposiciones adicionales/transitorias/finales no cuelgan del último capítulo
+            meta={"ruta": "" if heading.startswith("Disposici") else " > ".join(ruta[k] for k in sorted(ruta))},
         ))
     return docs
 
